@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 
 //routes
 import userRoutes from "./routes/userRoutes";
+import authRoutes from "./routes/authRoutes";
 
 const corsOptions = {
   origin: ["http://localhost:5173"],
@@ -36,7 +37,7 @@ app.use(cookieParser());
 const server = http.createServer(app);
 
 app.use("/api/user", userRoutes);
-// app.use("/api/auth", authRoutes);
+app.use("/api/auth", authRoutes);
 // app.use("/api/test", testRoutes);
 // app.use("/api/ai", aiRoutes);
 // app.use("/api/testAttempt", testAttemptRoutes);

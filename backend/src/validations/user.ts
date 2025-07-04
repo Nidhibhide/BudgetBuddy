@@ -17,4 +17,11 @@ const LoginValidation = Joi.object({
   email: emailValidator(),
   password: passwordValidator(),
 });
-export { userRegisterValidation,LoginValidation };
+const userUpdateValidation = Joi.object({
+  name: stringValidator("Name", 3, 50, true),
+  email: emailValidator(),
+});
+const EmailValidation = Joi.object({
+  email: emailValidator(),
+});
+export { userRegisterValidation, LoginValidation, userUpdateValidation ,EmailValidation};

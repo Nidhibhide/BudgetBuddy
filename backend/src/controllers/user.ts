@@ -7,6 +7,7 @@ import { JsonOne } from "../utils/responseFun";
 import { Request, Response } from "express";
 import {
   accessTokenOptions,
+  clearCookies,
   refreshTokenOptions,
 } from "../utils/cookieOptions";
 // import { clearCookies } from "../utils/cookieOptions";
@@ -141,4 +142,43 @@ const googleLogin = async (req: Request, res: Response) => {
     JsonOne(res, 500, "Google login failed", false);
   }
 };
-export { registerUser, login, googleLogin };
+
+const logOut = async (req: Request, res: Response) => {
+  try {
+    res.clearCookie("access_token", clearCookies);
+
+    res.clearCookie("refresh_token", clearCookies);
+
+    return JsonOne(res, 200, "Logout successfully", true);
+  } catch (error) {
+    JsonOne(res, 500, "unexpected error occurred while logging out ", false);
+  }
+};
+const updateProfile = async (req: Request, res: Response) => {
+  try {
+    const { name, email } = req.body;
+    const { id } = req.params;
+    const user = await User.findById(id);
+    if (user?.authProvider === "google" && email !== user?.email) {
+      return JsonOne(
+        res,
+        400,
+        "Cannot update email for Google-authenticated users",
+        false
+      );
+    }
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { name, email },
+      { new: true }
+    ).select("createdAt email name _id");
+
+    if (!updatedUser) {
+      return JsonOne(res, 404, "User not found", false);
+    }
+    JsonOne(res, 201, "Profile updated successfully", true, updatedUser);
+  } catch (err) {
+    JsonOne(res, 500, "unexpected error occurred while updating user", false);
+  }
+};
+export { registerUser, login, googleLogin, logOut,updateProfile };
