@@ -9,22 +9,22 @@ import {
 import express from "express";
 
 import {
-  LoginValidtorMid,
-  EmailValidtorMid,
-} from "../middlewares/validationMid/user";
+  LoginMid,
+  EmailMid,
+} from "../middlewares/Validators/user";
 import IsLoggeedIn from "../middlewares/TokenAuth";
 
 const router = express.Router();
 
-router.put("/changePassword", LoginValidtorMid, changePassword);
+router.put("/changePassword", LoginMid, changePassword);
 router.post(
   "/verifyCurrentPassword",
   IsLoggeedIn,
-  LoginValidtorMid,
+  LoginMid,
   verifyCurrentPassword
 );
 
-router.post("/forgotPassword", EmailValidtorMid, forgotPass);
+router.post("/forgotPassword", EmailMid, forgotPass);
 router.get("/reset/:token", resetPass);
 router.get("/checkToken", checkToken);
 router.get("/refreshToken", refreshToken);
