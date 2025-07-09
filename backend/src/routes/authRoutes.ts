@@ -1,17 +1,12 @@
 import {
   checkToken,
   changePassword,
-  forgotPass,
-  resetPass,
   verifyCurrentPassword,
   refreshToken,
 } from "../controllers/auth";
 import express from "express";
 
-import {
-  LoginMid,
-  EmailMid,
-} from "../middlewares/Validators/user";
+import { LoginMid, EmailMid } from "../middlewares/Validators/user";
 import IsLoggeedIn from "../middlewares/TokenAuth";
 
 const router = express.Router();
@@ -24,8 +19,6 @@ router.post(
   verifyCurrentPassword
 );
 
-router.post("/forgotPassword", EmailMid, forgotPass);
-router.get("/reset/:token", resetPass);
 router.get("/checkToken", checkToken);
 router.get("/refreshToken", refreshToken);
 

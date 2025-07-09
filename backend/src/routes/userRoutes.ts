@@ -4,6 +4,7 @@ import {
   googleLogin,
   logOut,
   updateProfile,
+  getMe
 } from "../controllers/user";
 import express from "express";
 import IsLoggeedIn from "../middlewares/TokenAuth";
@@ -19,4 +20,5 @@ router.post("/register", RegisterMid, registerUser);
 router.post("/login", LoginMid, login);
 router.post("/google-login", googleLogin);
 router.get("/logout", IsLoggeedIn, logOut);
+router.get("/getMe", IsLoggeedIn, getMe);
 export default router;

@@ -181,4 +181,17 @@ const updateProfile = async (req: Request, res: Response) => {
     JsonOne(res, 500, "unexpected error occurred while updating user", false);
   }
 };
-export { registerUser, login, googleLogin, logOut,updateProfile };
+
+const getMe = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+
+    if (!user) {
+      return JsonOne(res, 404, "Profile not found", false);
+    }
+    return JsonOne(res, 200, "User Found", true, user);
+  } catch (error) {
+    JsonOne(res, 500, "unexpected error occurred while fetching user", false);
+  }
+};
+export { registerUser, login, googleLogin, logOut, updateProfile, getMe };

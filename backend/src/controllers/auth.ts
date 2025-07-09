@@ -40,76 +40,6 @@ const verifyCurrentPassword = async (req: Request, res: Response) => {
   }
 };
 
-const forgotPass = async (req: Request, res: Response) => {
-  try {
-    const { email } = req.body;
-
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return JsonOne(res, 404, "User not found", false);
-    }
-
-    const token = crypto.randomBytes(12).toString("hex");
-
-    user.resetPasswordToken = token;
-    user.resetPasswordExpire = expireTime();
-    await user.save();
-
-    await nodemailer.createTestAccount();
-
-    const transporter = transporterFun();
-
-    const mailOptions = mailOptionsForVResetPass(email, token);
-
-    await transporter.sendMail(mailOptions);
-
-    return JsonOne(
-      res,
-      200,
-      `Verification link sent to ${email}  Click it to reset your password.`,
-      true
-    );
-  } catch (error) {
-    console.error("Forgot Password Error:", error);
-    return JsonOne(
-      res,
-      500,
-      "Something went wrong. Please try again later.",
-      false
-    );
-  }
-};
-
-const resetPass = async (req: Request, res: Response) => {
-  try {
-    const { token } = req.params;
-
-    if (!token) {
-      return JsonOne(res, 401, "Token not provided!!", false);
-    }
-
-    const user = await User.findOne(
-      { resetPasswordToken: token },
-      { resetPasswordExpire: 1, email: 1 }
-    );
-
-    if (!user || !user.resetPasswordExpire) {
-      return JsonOne(res, 404, "User not found!!", false);
-    }
-    const expireTime = user?.resetPasswordExpire;
-    const currentTime = new Date();
-
-    if (currentTime > expireTime) {
-      return JsonOne(res, 400, "Link expired!!", false);
-    }
-
-    return JsonOne(res, 200, "success!!", true, user);
-  } catch (error) {
-    return JsonOne(res, 500, "reset password Failed", false);
-  }
-};
-
 const checkToken = async (req: Request, res: Response) => {
   const token = req.cookies.access_token;
 
@@ -177,11 +107,4 @@ const changePassword = async (req: Request, res: Response) => {
     return JsonOne(res, 500, "Server error", false);
   }
 };
-export {
-  changePassword,
-  forgotPass,
-  resetPass,
-  checkToken,
-  verifyCurrentPassword,
-  refreshToken,
-};
+export { changePassword, checkToken, verifyCurrentPassword, refreshToken };
