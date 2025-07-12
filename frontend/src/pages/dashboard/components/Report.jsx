@@ -70,7 +70,6 @@ const Report = () => {
           options={[...CATEGORIES, "Select All"]}
         />
       </div>
-
       <div className="h-full w-full mt-4">
         <Table isStriped aria-label="Example static collection table">
           <TableHeader>
