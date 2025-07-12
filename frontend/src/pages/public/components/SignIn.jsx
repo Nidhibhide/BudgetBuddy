@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { InputField } from "../../../components";
+import { InputBox, Button, showError, showSuccess } from "../../../components";
 import { signin, signinwithGoogle, getMe } from "../../../api/user";
-import { Link ,useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import authStore from "../../../store/authStore";
-import { showSuccess, showError } from "../../../components/ToastUtil";
+
 const SignIn = () => {
   const [loading, setLoading] = useState(false);
   const setUser = authStore((state) => state.setUser);
@@ -28,6 +28,7 @@ const SignIn = () => {
       if (loading) return;
       setLoading(true);
       const signinRes = await signin(values);
+
       const { message: signinMsg, statusCode: signinStatus } = signinRes;
 
       if (signinStatus === 200) {
@@ -38,7 +39,7 @@ const SignIn = () => {
         if (getMeStatus === 200) {
           setUser(data);
         }
-        setTimeout(() => navigate("/dashboard/charts"), 3000);
+        setTimeout(() => navigate("/dashboard/home"), 3000);
       } else if (signinMsg) {
         showError(signinMsg);
       }
@@ -67,7 +68,7 @@ const SignIn = () => {
           console.log(data);
           setUser(data);
         }
-        setTimeout(() => navigate("/dashboard/charts"), 3000);
+        setTimeout(() => navigate("/dashboard/home"), 3000);
       } else if (signinMsg) {
         showError(signinMsg);
       }
@@ -101,32 +102,18 @@ const SignIn = () => {
         >
           {({ handleSubmit }) => (
             <>
-              <div className="flex flex-col space-y-4 mb-8 w-full">
-                <div className="flex flex-col space-y-1">
-                  <InputField
-                    label="Email"
-                    name="email"
-                    type="email"
-                    placeholder="Enter your Email"
-                  />
-                </div>
-                <div className="flex flex-col space-y-1">
-                  <InputField
-                    label="Password"
-                    name="password"
-                    type="password"
-                    placeholder="Enter your password"
-                  />
-                </div>
+              <div className="flex flex-col mb-12 gap-3 w-full">
+                <InputBox name="email" label="Enter your Email" type="email" />
+                <InputBox
+                  name="password"
+                  label="Enter your Password"
+                  type="password"
+                />
               </div>
-              <button
-                onClick={handleSubmit}
-                type="button"
-                disabled={loading}
-                className="bg-[#6366f1] dark:bg-[#818cf8] text-white  py-2.5 md:text-lg text-base font-medium rounded-xl  hover:bg-indigo-600   hover:shadow-md transition duration-500 w-full"
-              >
+
+              <Button onClick={handleSubmit} disabled={loading}>
                 {loading ? "Loading..." : "Sign In"}
-              </button>
+              </Button>
               <p className="md:text-base text-sm ">
                 New User?{" "}
                 <Link to="/signup" className="font-semibold  hover:underline">

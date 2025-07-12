@@ -1,88 +1,110 @@
 import mongoose from "mongoose";
-import User from "../models/user";
 import { JsonOne, JsonAll } from "../utils/responseFun";
 import { Request, Response } from "express";
 import expense from "../models/expense";
-
+import budget from "../models/budget";
+import { MONTHS } from "../../../shared/constants";
 const create = async (req: Request, res: Response) => {
-  const { titie, amount, category, type, user } = req.body;
+  const { title, amount, category, type, description } = req.body;
+  const userId = req.user?._id;
 
   try {
+    const currentBudget = await budget.findOne({ user: userId });
+
+    if (type === "Expense") {
+      if (!currentBudget || currentBudget.budget < amount) {
+        return JsonOne(res, 400, "Insufficient budget", false);
+      }
+    }
+
     const data = await expense.create({
-      titie,
+      title,
       amount,
       category,
       type,
-      user,
+      user: userId,
+      description,
     });
     if (!data) {
-      return JsonOne(res, 500, "Failed to create expense", false);
+      return JsonOne(res, 500, "Failed to add new entry", false);
     }
 
+    const value = type === "Income" ? amount : -amount;
+
+    // Update or create budget
+    const updatedBudget = await budget.findOneAndUpdate(
+      { user: userId },
+      { $inc: { budget: value } },
+      { new: true, upsert: true } // upsert: creates if not exists
+    );
+    if (!updatedBudget) {
+      return JsonOne(res, 500, "Failed to update budget", false);
+    }
     await data.save();
 
-    JsonOne(res, 201, `${titie} created successfully  `, true);
+    JsonOne(res, 201, "New entry added", true);
   } catch (error) {
-    JsonOne(res, 500, "unexpected error occurred while create expense", false);
+    JsonOne(res, 500, "unexpected error occurred while add new entry", false);
   }
 };
 
 const getAll = async (req: Request, res: Response) => {
   try {
-    const {
-      search = "",
-      sortOrder = "desc",
-      page = "1",
-      limit = "5",
-    } = req.query as {
-      search?: string;
-      sortOrder?: "asc" | "desc";
-      page?: string;
-      limit?: string;
-    };
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 5;
+    const sortOrder = req.query.sortOrder === "asc" ? 1 : -1;
+    const month = req.query.month as string;
+    const category = req.query.category as string;
+    const user = req.user?._id;
 
-    const skip = (parseInt(page) - 1) * parseInt(limit);
-    const sort = sortOrder === "asc" ? 1 : -1;
+    if (!user) {
+      return JsonOne(res, 400, "User ID is required", false);
+    }
+    const skip = (page - 1) * limit;
 
-    const matchStage: any = {
+    const match: any = {
       isDeleted: false,
-      $or: [
-        { title: { $regex: search, $options: "i" } },
-        { category: { $regex: search, $options: "i" } },
-      ],
+      user: user,
     };
+    if (category && category !== "Select All") match.category = category;
+    const aggMatch: any = { ...match };
+    if (month) {
+      const monthIndex = MONTHS.indexOf(month);
+      if (monthIndex !== -1) {
+        aggMatch.$expr = {
+          $eq: [{ $month: "$createdAt" }, monthIndex + 1],
+        };
+      }
+    }
 
-    const aggregation: any[] = [
-      { $match: matchStage },
-      { $sort: { createdAt: sort } },
+    const pipeline: any[] = [
+      { $match: aggMatch },
+      { $sort: { createdAt: sortOrder } },
       { $skip: skip },
-      { $limit: parseInt(limit) },
+      { $limit: limit },
       {
         $project: {
-          titie: 1,
+          title: 1,
           amount: 1,
           category: 1,
           type: 1,
+          description: 1,
+          month: 1,
+          createdAt: 1,
         },
       },
     ];
-    const data = await expense.aggregate(aggregation);
-    const total: number = await expense.countDocuments(matchStage);
 
-    JsonAll(
-      res,
-      200,
-      "Expenses fetched successfully",
-      data,
-      total,
-      parseInt(page),
-      parseInt(limit)
-    );
-  } catch {
+    const data = await expense.aggregate(pipeline);
+    const total = await expense.countDocuments(match);
+
+    JsonAll(res, 200, "Records fetched successfully", data, total, page, limit);
+  } catch (err) {
+    console.error("Fetch error:", err);
     JsonOne(
       res,
       500,
-      "unexpected error occurred while fetching expenses",
+      "Unexpected error occurred while fetching expenses",
       false
     );
   }

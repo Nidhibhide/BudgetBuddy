@@ -1,7 +1,7 @@
 import { Home, SignIn, Header, SignUp } from "./pages/public";
 import { Toaster } from "react-hot-toast";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Welcome, Setting, Charts } from "./pages/dashboard";
+import { Welcome, Setting, Dashboard, Report,AddEntry } from "./pages/dashboard";
 
 function App() {
   return (
@@ -12,10 +12,12 @@ function App() {
             <Route index element={<Home />} />
             <Route path="signin" element={<SignIn />} />
             <Route path="signup" element={<SignUp />} />
-            <Route path="dashboard" element={<Welcome />}>
-              <Route path="setting" element={<Setting />} />
-              <Route path="charts" element={<Charts />} />
-            </Route>
+          </Route>
+          <Route path="/dashboard" element={<Welcome />}>
+            <Route path="setting" element={<Setting />} />
+            <Route path="home" element={<Dashboard/>} />
+            <Route path="report" element={<Report />} />
+            <Route path="add-entry" element={<AddEntry />} />
           </Route>
         </Routes>
       </Router>

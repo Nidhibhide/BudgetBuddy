@@ -1,35 +1,47 @@
 import React from "react";
-
-import authStore from "../../../store/authStore";
+import { useNavigate } from "react-router-dom";
 import {
   Chart as ChartJS,
   ArcElement,
-  Tooltip,
+  Tooltip as ChartTip,
   Legend,
   BarElement,
   CategoryScale,
   LinearScale,
 } from "chart.js";
-import { Bar } from "react-chartjs-2";
-import { Piechart, Cards, Bargraph } from "../../../components";
-ChartJS.register(ArcElement, Tooltip, Legend);
-ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
-const Charts = () => {
-  const user = authStore((state) => state.user);
-
+import { IoAddSharp } from "react-icons/io5";
+import { Button, Tooltip } from "../../../components";
+ChartJS.register(ArcElement, ChartTip, Legend);
+ChartJS.register(BarElement, CategoryScale, LinearScale, ChartTip, Legend);
+const Dashboard = () => {
+    const navigate = useNavigate();
   return (
     <div className="flex flex-col m-4 ">
-      <h1 className="text-3xl font-medium">Welcome {user?.name} !</h1>{" "}
-      <div className="flex pt-6 gap-5 ">
+      {/* <h1 className="text-3xl font-medium">Welcome {user?.name} !</h1>{" "} */}
+      <div className="flex justify-end  mb-4">
+        <Tooltip label="Add new Entry">
+          <Button
+            width="w-[150px]"
+            onClick={() => navigate("/dashboard/add-entry")}
+          >
+            {" "}
+            <div className="flex justify-center items-center gap-1">
+              Add New
+              <IoAddSharp size={22} />
+            </div>
+          </Button>
+        </Tooltip>
+      </div>
+
+      {/* <div className="flex pt-6 gap-5 ">
         <Piechart />
         <div className="bg-slate-100 dark:bg-slate-800 rounded-xl shadow-md p-4 flex flex-col gap-4 text-slate-900 dark:text-slate-100">
-          {/* Balance Section */}
+
           <div className="flex flex-col gap-1">
             <h2 className="text-lg font-semibold">💰 Total Balance</h2>
             <p className="text-3xl font-bold">₹10,000</p>
           </div>
 
-          {/* Spending Info */}
           <div className="flex justify-between items-center text-sm font-medium">
             <span>Spent: ₹6,500</span>
             <span className="text-green-600 dark:text-green-400">
@@ -37,13 +49,12 @@ const Charts = () => {
             </span>
           </div>
 
-          {/* Budget Usage Progress */}
           <div className="text-right mt-2 text-sm font-semibold text-indigo-600 dark:text-indigo-400">
             65% of budget used
           </div>
         </div>
-      </div>
-      <Cards />
+      </div> */}
+      {/* <Cards /> */}
       {/* <div className="flex gap-5 mt-4  ">
         <Bargraph />
 
@@ -106,8 +117,7 @@ const Charts = () => {
         </div>
       </div> */}
     </div>
-   
   );
 };
 
-export default Charts;
+export default Dashboard;

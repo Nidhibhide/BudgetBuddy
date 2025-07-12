@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { InputField } from "../../../components";
+import { InputBox, showError, showSuccess,Button } from "../../../components";
 import { Link, useNavigate } from "react-router-dom";
 import { signup } from "../../../api/user";
-import { showError, showSuccess } from "../../../components/ToastUtil";
+
 const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -55,40 +55,20 @@ const SignUp = () => {
         >
           {({ handleSubmit }) => (
             <>
-              <div className="flex flex-col space-y-4 m-8 w-full">
-                <div className="flex flex-col space-y-1">
-                  <InputField
-                    label="Name"
-                    name="name"
-                    type="text"
-                    placeholder="Enter your name"
-                  />
-                </div>
-                <div className="flex flex-col space-y-1">
-                  <InputField
-                    label="Email"
-                    name="email"
-                    type="email"
-                    placeholder="Enter your Email"
-                  />
-                </div>
-                <div className="flex flex-col space-y-1">
-                  <InputField
-                    label="Password"
-                    name="password"
-                    type="password"
-                    placeholder="Enter your password"
-                  />
-                </div>
+              <div className="flex flex-col mb-12 gap-3 w-full">
+                <InputBox name="name" label="Enter your Name" type="email"/>
+                <InputBox name="email" label="Enter your Email" type="email" />
+                <InputBox
+                  name="password"
+                  label="Enter your Password"
+                  type="password"
+                />
               </div>
-              <button
-                type="button"
-                disabled={loading}
-                onClick={handleSubmit}
-                className="bg-[#6366f1] dark:bg-[#818cf8] dark:hover:bg-indigo-600 text-white py-2.5 md:text-lg text-base font-medium rounded-xl w-full   hover:bg-indigo-600 hover:shadow-md transition duration-500"
-              >
-                {loading ? "Loading..." : "  Sign Up"}
-              </button>
+
+             
+               <Button onClick={handleSubmit} disabled={loading}>
+                              {loading ? "Loading..." : "Sign Up"}
+                            </Button>
               <p className="md:text-base text-sm ">
                 Back to{" "}
                 <Link to="/" className="font-semibold  hover:underline">

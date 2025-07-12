@@ -2,9 +2,14 @@ import { JsonOne } from "../utils/responseFun";
 import { Request, Response, NextFunction } from "express";
 import User from "../models/user";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { InferSchemaType } from "mongoose";
+import { InferSchemaType, Types } from "mongoose";
 
-type User = InferSchemaType<typeof User.schema>;
+type User = {
+  _id: Types.ObjectId; 
+  name: string;
+  email: string;
+  createdAt: Date;
+};
 
 declare global {
   namespace Express {
@@ -26,14 +31,12 @@ const IsLoggeedIn = async (req: Request, res: Response, next: NextFunction) => {
       process.env.ACCESS_TOKEN as string
     ) as JwtPayload;
     const userID = decode.id;
-    const user = await User.findById(userID).select(
-      "name  email createdAt "
-    );
+    const user = await User.findById(userID).select("name  email createdAt ");
 
     if (!user) {
       return JsonOne(res, 404, "User not found", false);
     }
-    req.user = user;
+    req.user = user as User;
 
     next();
   } catch (error) {

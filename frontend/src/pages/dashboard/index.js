@@ -1,5 +1,7 @@
 import Sidebar from "./components/Sidebar";
 import Welcome from "./components/Welcome";
 import Setting from "./components/Setting";
-import Charts from "./components/Charts";
-export {Welcome,Sidebar,Setting,Charts}
+import Dashboard from "./components/Dashboard";
+import Report from "./components/Report";
+import AddEntry from "./components/AddEntry";
+export {Welcome,Sidebar,Setting,Dashboard,Report,AddEntry}

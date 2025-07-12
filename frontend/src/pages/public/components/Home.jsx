@@ -1,10 +1,10 @@
 import React from "react";
-
+import { Button } from "../../../components";
 import { useNavigate } from "react-router-dom";
 const Home = () => {
   const navigate = useNavigate();
   return (
-    <div className="bg-[#ffffff]  dark:bg-[#000000] text-[#0f172a] dark:text-[#f8fafc]  h-auto w-full py-24    ">
+    <div className="bg-[#ffffff]  dark:bg-[#000000] text-[#0f172a] dark:text-[#f8fafc]  h-auto w-full py-28    ">
       <div className="flex xl:flex-row flex-col gap-12 xl:gap-2 px-4 md:px-20 ">
         <div className="flex-1 flex flex-col xl:gap-8 gap-6 ">
           <div className="xl:text-7xl  md:text-6xl text-4xl  font-bold text-center xl:text-left ">
@@ -17,16 +17,12 @@ const Home = () => {
             Simple. Smart. Stress-free.
           </div>
           <div className="flex gap-4 justify-center xl:justify-start ">
-            <button
-              type="button"
-              onClick={() => navigate("/signin")}
-              className="bg-[#6366f1] dark:bg-[#818cf8]  md:py-3 py-2 text-base  font-medium text-white rounded-xl  hover:bg-indigo-600 dark:hover:bg-indigo-600 hover:shadow-md transition duration-500 w-[150px] "
-            >
+            <Button onClick={() => navigate("/signin")} width="w-[150px]">
               Get Started
-            </button>
+            </Button>
             <a
               href="#features"
-              className="bg-[#6366f1] dark:bg-[#818cf8]  md:py-3 py-2  text-center  text-base font-medium text-white rounded-xl  hover:bg-indigo-600 dark:hover:bg-indigo-600 hover:shadow-md transition duration-500  w-[150px]"
+              className="bg-[#6366f1] dark:bg-[#818cf8]   py-2  text-center  text-base font-medium text-white rounded-xl  hover:bg-indigo-600 dark:hover:bg-indigo-600 hover:shadow-md transition duration-500  w-[150px]"
             >
               Read more
             </a>
