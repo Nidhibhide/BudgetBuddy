@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-import { MdLogout, MdDashboard, MdAdd, MdOutlineRestore } from "react-icons/md";
+import { MdLogout, MdDashboard, MdOutlineRestore } from "react-icons/md";
 
 import { IoMdSettings } from "react-icons/io";
 
@@ -11,11 +11,6 @@ const Sidebar = () => {
       label: "Dashboard",
       icon: <MdDashboard size={28} />,
     },
-    // {
-    //   to: "/dashboard/createTest",
-    //   label: "Add New",
-    //   icon: <MdAdd size={28} />,
-    // },
     {
       to: "/dashboard/report",
       label: "Reports",
@@ -27,7 +22,7 @@ const Sidebar = () => {
       icon: <IoMdSettings size={28} />,
     },
     {
-      to: "/dashboard/myScores",
+      to: "/dashboard/logout",
       label: "Logout",
       icon: <MdLogout size={28} />,
     },
@@ -37,7 +32,9 @@ const Sidebar = () => {
     <div className="w-80 h-full flex flex-col bg-[#f1f5f9] dark:bg-[#1e293b] text-[#0f172a] dark:text-[#f8fafc]">
       {/* Sidebar Navigation */}
       <div className="flex py-8 justify-center text-3xl font-bold">
-        <p className="">Budget<span className="text-indigo-500">Buddy</span></p>
+        <p className="">
+          Budget<span className="text-indigo-500">Buddy</span>
+        </p>
       </div>
       <div className="h-full  ">
         <ul className="flex flex-col text-xl font-medium">

@@ -7,11 +7,11 @@ import {
   TableRow,
   TableCell,
 } from "@heroui/react";
-import { SelectBox, showError, showSuccess } from "../../../components";
+import { SelectBox, showError, showSuccess,Button,ExportToPdf } from "../../../components";
 import { useNavigate } from "react-router-dom";
-import { getAll } from "../../../api/expense";
+import { getAllExpense } from "../../../api";
 import { CATEGORIES, MONTHS } from "../../../../../shared/constants";
-import { Button, ExportToPdf } from "../../../components";
+
 
 const Report = () => {
   const [month, setMonth] = useState("");
@@ -33,7 +33,7 @@ const Report = () => {
 
   const handleReport = async () => {
     try {
-      const response = await getAll(filters);
+      const response = await getAllExpense(filters);
       if (response?.statusCode === 200) {
         setData(response?.data);
       }
@@ -52,11 +52,8 @@ const Report = () => {
   };
 
   return (
-    
-    <div className="px-4" ref={previewRef}>
-      <h1 className="text-3xl font-bold text-center py-4">Report</h1>
-
-      <div className="flex w-full justify-end gap-4">
+    <div className="px-4">
+      <div className="flex w-full justify-end mt-4 gap-4">
         <SelectBox
           label="Month"
           value={month}
@@ -70,15 +67,22 @@ const Report = () => {
           options={[...CATEGORIES, "Select All"]}
         />
       </div>
-      <div className="h-full w-full mt-4">
-        <Table isStriped aria-label="Example static collection table">
+      <div className="h-full w-full mt-4" ref={previewRef}>
+        <h1 className="text-3xl font-bold text-center py-4">Report</h1>
+
+        <Table
+          className="table-fixed w-full"
+          isStriped
+          aria-label="Report table"
+        >
           <TableHeader>
-            <TableColumn className="text-sm">TITLE</TableColumn>
-            <TableColumn className="text-sm">AMOUNT</TableColumn>
-            <TableColumn className="text-sm">CATEGORY</TableColumn>
-            <TableColumn className="text-sm">TYPE</TableColumn>
-            <TableColumn className="text-sm">DATE</TableColumn>
+            <TableColumn className="text-sm w-[35%]">TITLE</TableColumn>
+            <TableColumn className="text-sm w-[15%]">AMOUNT</TableColumn>
+            <TableColumn className="text-sm w-[20%]">CATEGORY</TableColumn>
+            <TableColumn className="text-sm w-[15%]">TYPE</TableColumn>
+            <TableColumn className="text-sm w-[15%]">DATE</TableColumn>
           </TableHeader>
+
           <TableBody>
             {data.length > 0 ? (
               data.map((item, index) => (

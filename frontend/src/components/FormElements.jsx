@@ -1,6 +1,13 @@
 import React from "react";
-import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
-import TextField from "@mui/material/TextField";
+import {
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Checkbox,
+  ListItemText,TextField
+} from "@mui/material";
 import { useField } from "formik";
 
 export const SelectBox = ({ label, value, options, onChange }) => {
@@ -65,5 +72,52 @@ export const Button = ({
     >
       {children}
     </button>
+  );
+};
+export const MultiSelect = ({
+  label,
+  options,
+  selected = [],
+  onChange,
+  error,
+  helperText,
+}) => {
+  return (
+    <FormControl fullWidth size="small" variant="outlined" error={!!error}>
+      <InputLabel>{label}</InputLabel>
+      <Select
+        multiple
+        value={selected}
+        onChange={onChange}
+        label={label}
+        renderValue={(selected) => selected.join(", ")}
+        MenuProps={{
+          disablePortal: true, // ✅ prevent modal from closing on select
+          PaperProps: {
+            style: {
+              maxHeight: 48 * 4.5,
+            },
+          },
+        }}
+      >
+        {options.map((option) => (
+          <MenuItem key={option} value={option}>
+            <Checkbox checked={selected.includes(option)} />
+            <ListItemText primary={option} />
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  );
+};
+
+export const Tooltip = ({ label, children }) => {
+  return (
+    <div className="relative group inline-block cursor-pointer">
+      {children}
+      <span className="absolute hidden group-hover:block top-full mt-1 left-1/2 -translate-x-1/2 bg-black text-white text-sm rounded px-2 py-1 whitespace-nowrap z-50">
+        {label}
+      </span>
+    </div>
   );
 };

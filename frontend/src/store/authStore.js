@@ -6,18 +6,21 @@ const authStore = create(
     (set, get) => ({
       user: null,
 
-      //set user data
+      // Set user data
       setUser: (userData) => set({ user: userData }),
 
-      // //get user data
-      // getUser: () => get().user,
-
-      //clear data
-      logout: () => set({ user: null }),
+      // Clear user data and local storage
+      logout: () => {
+        set({ user: null });
+        setTimeout(() => {
+          localStorage.removeItem("auth_data");
+        }, 100);
+      },
     }),
     {
-      name: "data", // key in localStorage
+      name: "auth_data",
     }
   )
 );
+
 export default authStore;

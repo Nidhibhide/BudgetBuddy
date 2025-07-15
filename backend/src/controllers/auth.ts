@@ -1,44 +1,10 @@
 import User from "../models/user";
-import nodemailer from "nodemailer";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import crypto from "crypto";
 import { JsonOne } from "../utils/responseFun";
-import { Request, RequestHandler, Response } from "express";
-import {
-  mailOptionsForVResetPass,
-  transporterFun,
-} from "../utils/sendEmailFun";
+import { Request, Response } from "express";
+
 import { accessTokenOptions } from "../utils/cookieOptions";
-import expireTime from "../utils/expireTimeFun";
-
-const verifyCurrentPassword = async (req: Request, res: Response) => {
-  try {
-    const { password, email } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) {
-      return JsonOne(res, 404, "User not found", false);
-    }
-    if (!user.password) {
-      return JsonOne(res, 404, "Old password not found", false);
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-
-    if (!isMatch) {
-      return JsonOne(res, 401, "Incorrect password", false);
-    }
-
-    return JsonOne(res, 200, "Password Match Found", true);
-  } catch (error) {
-    JsonOne(
-      res,
-      500,
-      "unexpected error occurred while verify current password",
-      false
-    );
-  }
-};
 
 const checkToken = async (req: Request, res: Response) => {
   const token = req.cookies.access_token;
@@ -89,22 +55,32 @@ const refreshToken = async (req: Request, res: Response) => {
 
 const changePassword = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { OldPassword, NewPassword } = req.body;
+    const email = req.user?.email;
 
     const user = await User.findOne({ email });
     if (!user) {
       return JsonOne(res, 404, "User not found", false);
     }
+    if (!user.password) {
+      return JsonOne(res, 404, "Old password not found", false);
+    }
 
-    const hashedPass = await bcrypt.hash(password, 10);
+    const isMatch = await bcrypt.compare(OldPassword, user.password);
+
+    if (!isMatch) {
+      return JsonOne(res, 401, "Incorrect old password", false);
+    }
+
+    const hashedPass = await bcrypt.hash(NewPassword, 10);
     user.password = hashedPass;
 
     await user.save();
 
-    return JsonOne(res, 200, "Password reset successfully", true);
+    return JsonOne(res, 201, "Password changed successfully", true);
   } catch (error) {
-    console.error("Error resetting password:", error);
+    console.error("Error occurred while change password:", error);
     return JsonOne(res, 500, "Server error", false);
   }
 };
-export { changePassword, checkToken, verifyCurrentPassword, refreshToken };
+export { changePassword, checkToken, refreshToken };

@@ -156,9 +156,12 @@ const logOut = async (req: Request, res: Response) => {
 };
 const updateProfile = async (req: Request, res: Response) => {
   try {
-    const { name, email } = req.body;
-    const { id } = req.params;
-    const user = await User.findById(id);
+    const { name, email, currency } = req.body;
+    const id = req.user?._id;
+    let user = await User.findById(id);
+    if (!user) {
+      return JsonOne(res, 404, "User not found", false);
+    }
     if (user?.authProvider === "google" && email !== user?.email) {
       return JsonOne(
         res,
@@ -167,16 +170,13 @@ const updateProfile = async (req: Request, res: Response) => {
         false
       );
     }
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      { name, email },
-      { new: true }
-    ).select("createdAt email name _id");
 
-    if (!updatedUser) {
-      return JsonOne(res, 404, "User not found", false);
-    }
-    JsonOne(res, 201, "Profile updated successfully", true, updatedUser);
+    user.name = name || user?.name;
+    user.email = email || user?.email;
+    user.currency = currency || user?.currency;
+    await user.save();
+
+    JsonOne(res, 201, "Profile updated successfully", true, user);
   } catch (err) {
     JsonOne(res, 500, "unexpected error occurred while updating user", false);
   }

@@ -16,10 +16,12 @@ import {
 import { Formik } from "formik";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import { create } from "../../../api/expense";
-import { CATEGORIES, TYPES } from "../../../../../shared/constants";
+import { createExpense } from "../../../api";
+import { TYPES } from "../../../../../shared/constants";
+import { appStore } from "../../../store";
 function AddEntry() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const GET_CATEGORY = appStore((state) => state.categories);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
@@ -55,7 +57,7 @@ function AddEntry() {
       return schema.notRequired();
     }),
 
-    category: Yup.string().oneOf(CATEGORIES).required("Category is required"),
+    category: Yup.string().oneOf(GET_CATEGORY).required("Category is required"),
 
     type: Yup.string().oneOf(TYPES).required("Type is required"),
   });
@@ -69,7 +71,7 @@ function AddEntry() {
         type: values.type,
       };
       setLoading(true);
-      const response = await create(payload);
+      const response = await createExpense(payload);
       const { message, statusCode } = response;
       if (statusCode === 201) {
         showSuccess(message);
@@ -136,7 +138,7 @@ function AddEntry() {
                             onChange={(e) =>
                               setFieldValue("category", e.target.value)
                             }
-                            options={CATEGORIES}
+                            options={GET_CATEGORY}
                           />
                         </div>
                       </div>

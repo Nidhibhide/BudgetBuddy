@@ -4,7 +4,7 @@ import {
   googleLogin,
   logOut,
   updateProfile,
-  getMe
+  getMe,
 } from "../controllers/user";
 import express from "express";
 import IsLoggeedIn from "../middlewares/TokenAuth";
@@ -15,10 +15,11 @@ import {
 } from "../middlewares/Validators/user";
 
 const router = express.Router();
-router.put("/updateProfile/:id", IsLoggeedIn, UpdateMid, updateProfile);
+
 router.post("/register", RegisterMid, registerUser);
 router.post("/login", LoginMid, login);
 router.post("/google-login", googleLogin);
 router.get("/logout", IsLoggeedIn, logOut);
 router.get("/getMe", IsLoggeedIn, getMe);
+router.put("/profile", IsLoggeedIn, UpdateMid, updateProfile);
 export default router;

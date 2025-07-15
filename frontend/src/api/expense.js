@@ -1,5 +1,5 @@
 import { globalaxios } from "../globals";
-export const create = async (data) => {
+export const createExpense = async (data) => {
   try {
     const res = await globalaxios.post("/expense/create", data);
     return res.data;
@@ -9,7 +9,7 @@ export const create = async (data) => {
     );
   }
 };
-export const getAll = async (filters) => {
+export const getAllExpense = async (filters) => {
   try {
     const res = await globalaxios.get("/expense/getAll", { params: filters });
     return res.data;

@@ -1,70 +1,52 @@
 import React, { useState } from "react";
-import { Formik } from "formik";
-import { SelectBox } from "./index";
+import { SelectBox, showError, Button, useHandleResponse } from "./index";
+import { CURRENCIES, THEMES } from "../../../shared/constants";
+import { appStore, authStore } from "../store";
+import { editUser } from "../api";
 
 const GeneralSetting = () => {
-  const [month, setMonth] = useState("");
-  const [category, setCategory] = useState("");
-  // const navigate = useNavigate();
+  const CurrentTheme = appStore((state) => state.theme);
+  const Theme = appStore((state) => state.setTheme);
+  const User = authStore((state) => state.user);
+  const [theme, setTheme] = useState(CurrentTheme);
+  const [loading, setLoading] = useState(false);
+  const [currency, setCurrency] = useState(User.currency);
+  const Response = useHandleResponse();
 
-  const months = [
-    { value: "January", label: "January" },
-    { value: "February", label: "February" },
-    { value: "March", label: "March" },
-    { value: "April", label: "April" },
-    { value: "May", label: "May" },
-    { value: "June", label: "June" },
-    { value: "July", label: "July" },
-    { value: "August", label: "August" },
-    { value: "September", label: "September" },
-    { value: "October", label: "October" },
-    { value: "November", label: "November" },
-    { value: "December", label: "December" },
-  ];
-
-  const categories = [
-    { value: "Hotel", label: "Hotel" },
-    { value: "Travel", label: "Travel" },
-    { value: "Food", label: "Food" },
-    { value: "Shopping", label: "Shopping" },
-    { value: "Others", label: "Others" },
-  ];
+  const handleClick = async () => {
+    try {
+      setLoading(true);
+      Theme(theme);
+      const response = await editUser({ currency });
+      Response({ response });
+    } catch (error) {
+      showError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
-    <div>
-      {" "}
-      <Formik
-        initialValues={{ email: "", password: "" }}
-        // validationSchema={validationSchema}
-        // onSubmit={handleSignIn}
-      >
-        {({ handleSubmit }) => (
-          <>
-            <div className="w-full flex flex-col gap-4">
-              <SelectBox
-                label="Select Currency"
-                value={month}
-                onChange={(e) => setMonth(e.target.value)}
-                options={months}
-              />
-              <SelectBox
-                label="Set as Theme"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                options={categories}
-              />
-              <button
-                onClick={handleSubmit}
-                type="button"
-                //   disabled={loading}
-                className="bg-[#6366f1] dark:bg-[#818cf8] text-white  py-2.5 md:text-lg text-base font-medium rounded-xl  hover:bg-indigo-600   hover:shadow-md transition duration-500 w-full"
-              >
-                {/* {loading ? "Loading..." : "Sign In"} */}
-                Save Changes
-              </button>
-            </div>
-          </>
-        )}
-      </Formik>
+    <div className=" flex flex-col items-center justify-center gap-6">
+      <h1 className="text-xl font-semibold ">General Setting</h1>
+      <div className="w-[600px] flex flex-col gap-4 ">
+        <SelectBox
+          label="Set Currency"
+          value={currency}
+          onChange={(e) => setCurrency(e.target.value)}
+          options={CURRENCIES}
+        />
+        <SelectBox
+          label="Set as Theme"
+          value={theme}
+          onChange={(e) => setTheme(e.target.value)}
+          options={THEMES}
+        />
+
+        <Button onClick={handleClick}>
+          {" "}
+          {loading ? "Loading..." : "Save Changes"}
+        </Button>
+      </div>
     </div>
   );
 };

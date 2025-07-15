@@ -5,7 +5,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { InferSchemaType, Types } from "mongoose";
 
 type User = {
-  _id: Types.ObjectId; 
+  _id: Types.ObjectId;
   name: string;
   email: string;
   createdAt: Date;
@@ -31,7 +31,9 @@ const IsLoggeedIn = async (req: Request, res: Response, next: NextFunction) => {
       process.env.ACCESS_TOKEN as string
     ) as JwtPayload;
     const userID = decode.id;
-    const user = await User.findById(userID).select("name  email createdAt ");
+    const user = await User.findById(userID).select(
+      "name  email createdAt currency "
+    );
 
     if (!user) {
       return JsonOne(res, 404, "User not found", false);

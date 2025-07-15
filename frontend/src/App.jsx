@@ -1,7 +1,15 @@
-import { Home, SignIn, Header, SignUp } from "./pages/public";
+import { Home, SignIn, Header, SignUp,SessionExpired } from "./pages/public";
 import { Toaster } from "react-hot-toast";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Welcome, Setting, Dashboard, Report,AddEntry } from "./pages/dashboard";
+import {
+  Welcome,
+  Setting,
+  Dashboard,
+  Report,
+  AddEntry,
+  Logout,
+} from "./pages/dashboard";
+import TokenAuth from "./TokenAuth";
 
 function App() {
   return (
@@ -12,12 +20,57 @@ function App() {
             <Route index element={<Home />} />
             <Route path="signin" element={<SignIn />} />
             <Route path="signup" element={<SignUp />} />
+            <Route path="/session-expired" element={<SessionExpired />} />
           </Route>
-          <Route path="/dashboard" element={<Welcome />}>
-            <Route path="setting" element={<Setting />} />
-            <Route path="home" element={<Dashboard/>} />
-            <Route path="report" element={<Report />} />
-            <Route path="add-entry" element={<AddEntry />} />
+          <Route
+            path="/dashboard"
+            element={
+              <TokenAuth>
+                {" "}
+                <Welcome />
+              </TokenAuth>
+            }
+          >
+            <Route
+              path="setting"
+              element={
+                <TokenAuth>
+                  <Setting />{" "}
+                </TokenAuth>
+              }
+            />
+            <Route
+              path="home"
+              element={
+                <TokenAuth>
+                  <Dashboard />
+                </TokenAuth>
+              }
+            />
+            <Route
+              path="report"
+              element={
+                <TokenAuth>
+                  <Report />
+                </TokenAuth>
+              }
+            />
+            <Route
+              path="logout"
+              element={
+                <TokenAuth>
+                  <Logout />
+                </TokenAuth>
+              }
+            />
+            <Route
+              path="add-entry"
+              element={
+                <TokenAuth>
+                  <AddEntry />
+                </TokenAuth>
+              }
+            />
           </Route>
         </Routes>
       </Router>

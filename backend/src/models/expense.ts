@@ -11,11 +11,7 @@ const expenseSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    category: {
-      type: String,
-      required: true,
-      enum: CATEGORIES,
-    },
+
     description: {
       type: String,
       required: false,

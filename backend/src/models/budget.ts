@@ -12,6 +12,10 @@ const budgetSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    limit: {
+      type: Number,
+      required: false,
+    },
   },
   { timestamps: true }
 );

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Sidebar from "./Sidebar";
+import {Sidebar} from "../index"
 import { Outlet } from "react-router-dom";
 import { IoMenu, IoCloseSharp } from "react-icons/io5";
 const Welcome = () => {

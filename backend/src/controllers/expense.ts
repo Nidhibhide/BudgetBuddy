@@ -30,12 +30,15 @@ const create = async (req: Request, res: Response) => {
     }
 
     const value = type === "Income" ? amount : -amount;
-
+    const newLimit = value * 0.8; //default limit
     // Update or create budget
     const updatedBudget = await budget.findOneAndUpdate(
       { user: userId },
-      { $inc: { budget: value } },
-      { new: true, upsert: true } // upsert: creates if not exists
+      {
+        $inc: { budget: value },
+        $set: { limit: newLimit },
+      },
+      { new: true, upsert: true }
     );
     if (!updatedBudget) {
       return JsonOne(res, 500, "Failed to update budget", false);

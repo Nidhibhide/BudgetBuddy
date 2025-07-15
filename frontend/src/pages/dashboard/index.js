@@ -4,4 +4,5 @@ import Setting from "./components/Setting";
 import Dashboard from "./components/Dashboard";
 import Report from "./components/Report";
 import AddEntry from "./components/AddEntry";
-export {Welcome,Sidebar,Setting,Dashboard,Report,AddEntry}
+import Logout from "./components/Logout";
+export {Welcome,Sidebar,Setting,Dashboard,Report,AddEntry,Logout}

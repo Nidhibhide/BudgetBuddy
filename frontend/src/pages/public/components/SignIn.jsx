@@ -2,14 +2,13 @@ import React, { useState } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { InputBox, Button, showError, showSuccess } from "../../../components";
-import { signin, signinwithGoogle, getMe } from "../../../api/user";
+import { signin, signinwithGoogle, getMe } from "../../../api";
 import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
-import authStore from "../../../store/authStore";
+import { callToStore } from "../../../components";
 
 const SignIn = () => {
   const [loading, setLoading] = useState(false);
-  const setUser = authStore((state) => state.setUser);
   const navigate = useNavigate();
   // validation schema
   const validationSchema = Yup.object({
@@ -37,7 +36,7 @@ const SignIn = () => {
         const userRes = await getMe();
         const { statusCode: getMeStatus, data } = userRes;
         if (getMeStatus === 200) {
-          setUser(data);
+          callToStore(data);
         }
         setTimeout(() => navigate("/dashboard/home"), 3000);
       } else if (signinMsg) {

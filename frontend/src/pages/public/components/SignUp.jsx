@@ -3,7 +3,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { InputBox, showError, showSuccess,Button } from "../../../components";
 import { Link, useNavigate } from "react-router-dom";
-import { signup } from "../../../api/user";
+import { signup } from "../../../api";
 
 const SignUp = () => {
   const [loading, setLoading] = useState(false);

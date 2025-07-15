@@ -8,7 +8,9 @@ import cookieParser from "cookie-parser";
 //routes
 import userRoutes from "./routes/userRoutes";
 import authRoutes from "./routes/authRoutes";
-import expenseRoutes from "./routes/expenseRoutes"
+import expenseRoutes from "./routes/expenseRoutes";
+import budgetRoutes from "./routes/budgetRoutes";
+import categoryRoutes from "./routes/categoryRoutes";
 
 const corsOptions = {
   origin: ["http://localhost:5173"],
@@ -40,8 +42,8 @@ const server = http.createServer(app);
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/expense", expenseRoutes);
-// app.use("/api/ai", aiRoutes);
-// app.use("/api/testAttempt", testAttemptRoutes);
+app.use("/api/budget", budgetRoutes);
+app.use("/api/category", categoryRoutes);
 // app.use("/api/notification", notificationRoutes);
 
 const PORT = process.env.PORT || 8080;

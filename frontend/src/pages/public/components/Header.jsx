@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { FaWallet } from "react-icons/fa";
 import { Outlet } from "react-router-dom";
-import { IoMoonOutline } from "react-icons/io5";
-import { IoSunnyOutline } from "react-icons/io5";
+import { IoMoonOutline, IoSunnyOutline } from "react-icons/io5";
+// import { IoMoonOutline } from "react-icons/io5";
+// import { IoSunnyOutline } from "react-icons/io5";
 const Header = () => {
   const [darkMode, setDarkMode] = useState(false);
   useEffect(() => {

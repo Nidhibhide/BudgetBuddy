@@ -94,3 +94,32 @@ export const numberValidator = (
     ? rule.required().messages({ "any.required": `${label} is required` })
     : rule;
 };
+
+// 6. Array of String Validator
+export const stringArrayValidator = (
+  label: string,
+  required = false,
+  maxItems?: number
+) => {
+  let rule = Joi.array()
+    .items(
+      Joi.string()
+        .pattern(/^[a-zA-Z\s]+$/)
+        .messages({
+          "string.pattern.base": `${label} should contain only letters and spaces`,
+        })
+    )
+    .messages({
+      "array.base": `${label} must be an array`,
+    });
+
+  if (maxItems !== undefined) {
+    rule = rule.max(maxItems).messages({
+      "array.max": `${label} must have at most ${maxItems} item(s)`,
+    });
+  }
+
+  return required
+    ? rule.required().messages({ "any.required": `${label} is required` })
+    : rule;
+};
