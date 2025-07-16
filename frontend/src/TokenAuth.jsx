@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { checkToken, refreshToken } from "./api";
+import { useLocation } from "react-router-dom";
+import { authStore, appStore } from "./store";
 const TokenAuth = ({ children }) => {
   const [status, setStatus] = useState("loading");
-
+  const auth = authStore((state) => state.logout);
+  const app = appStore((state) => state.logout);
+  const location = useLocation();
   useEffect(() => {
     const validateToken = async () => {
       try {
@@ -17,6 +21,8 @@ const TokenAuth = ({ children }) => {
           if (statusCode === 200) {
             await validateToken();
           } else {
+            auth();
+            app();
             setStatus("expired");
           }
         }
@@ -26,7 +32,7 @@ const TokenAuth = ({ children }) => {
     };
 
     validateToken();
-  }, []);
+  }, [location.pathname]);
 
   // Redirect logic
   if (status === "loading") return null;

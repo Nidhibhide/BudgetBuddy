@@ -50,6 +50,45 @@ const FinancialSetting = () => {
       setLoading(false);
     }
   };
+//   const handleSubmit = async (values) => {
+//   try {
+//     setLoading(true);
+//     const { names: newCategories, limit: newLimit } = values;
+
+//     // Update budget limit if changed
+//     if (Number(newLimit) !== Number(limit)) {
+//       const res = await editbudget({ limit: Number(newLimit) });
+//       setLimit(newLimit);
+//       Response({ response: res });
+//     }
+
+//     // Find new categories (max 4)
+//     const addedCategories = newCategories.filter(
+//       (name) => !categories.includes(name)
+//     );
+
+//     if (addedCategories.length > 0) {
+//       // Get and delete records for each new category
+//       for (const category of addedCategories) {
+//         const { data = [] } = await getAllByCategory(category);
+//         if (data.length > 0) {
+//           await deleteByCategory(category);
+//         }
+//       }
+
+//       // Update the category list
+//       const res = await createCategory({ names: newCategories });
+//       setCategories(newCategories);
+//       Response({ response: res });
+//     }
+
+//   } catch (error) {
+//     showError("Failed to save changes");
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
 
   return (
     <div className="flex flex-col items-center justify-center gap-10">

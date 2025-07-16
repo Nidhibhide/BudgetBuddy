@@ -22,6 +22,7 @@ import { appStore } from "../../../store";
 function AddEntry() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const GET_CATEGORY = appStore((state) => state.categories);
+  const setLimit = appStore((state) => state.setLimit);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
@@ -68,12 +69,15 @@ function AddEntry() {
         title: values.title,
         amount: Number(values.amount),
         category: values.category,
+        description:
+          values.category === "Others" ? values.description : undefined,
         type: values.type,
       };
       setLoading(true);
       const response = await createExpense(payload);
-      const { message, statusCode } = response;
+      const { message, statusCode, data } = response;
       if (statusCode === 201) {
+        setLimit(data?.limit);
         showSuccess(message);
       } else {
         showError(message);
@@ -88,11 +92,13 @@ function AddEntry() {
   };
   return (
     <>
-      <Modal isOpen={isOpen} onOpenChange={handleOpenChange}>
-        <ModalContent>
+      <Modal isOpen={isOpen} onOpenChange={handleOpenChange} className="dark:bg-[#000000] dark:border border-white">
+        <ModalContent className=" ">
           {() => (
             <>
-              <ModalHeader>Add new Entry</ModalHeader>
+              <ModalHeader >
+                Add new Entry
+              </ModalHeader>
               <ModalBody>
                 <Formik
                   initialValues={{
@@ -100,6 +106,7 @@ function AddEntry() {
                     amount: "",
                     category: "",
                     type: "",
+                    description: "",
                   }}
                   validationSchema={validationSchema}
                   onSubmit={handleCreate}

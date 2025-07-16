@@ -7,17 +7,24 @@ import {
   TableRow,
   TableCell,
 } from "@heroui/react";
-import { SelectBox, showError, showSuccess,Button,ExportToPdf } from "../../../components";
+import {
+  SelectBox,
+  showError,
+  showSuccess,
+  Button,
+  ExportToPdf,
+} from "../../../components";
 import { useNavigate } from "react-router-dom";
 import { getAllExpense } from "../../../api";
-import { CATEGORIES, MONTHS } from "../../../../../shared/constants";
-
+import { MONTHS } from "../../../../../shared/constants";
+import { appStore } from "../../../store";
 
 const Report = () => {
   const [month, setMonth] = useState("");
   const [category, setCategory] = useState("");
   const [data, setData] = useState([]);
   const [limit, setLimit] = useState("");
+  const categories = appStore((state) => state.categories);
   const navigate = useNavigate();
   const previewRef = useRef();
 
@@ -64,7 +71,7 @@ const Report = () => {
           label="Category"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          options={[...CATEGORIES, "Select All"]}
+          options={[...categories, "Select All"]}
         />
       </div>
       <div className="h-full w-full mt-4" ref={previewRef}>

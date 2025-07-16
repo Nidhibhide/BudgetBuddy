@@ -46,20 +46,37 @@ const Setting = () => {
   };
 
   return (
-    <div className="px-4">
-      <h1 className="text-3xl font-bold text-center py-4">Settings</h1>
+    <div className="px-4 pt-16  ">
       <Box sx={{ width: "100%" }}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Box
+          sx={{
+            borderBottom: 1,
+            borderColor: "divider",
+          }}
+        >
           <Tabs
             value={value}
             onChange={handleChange}
             variant="scrollable"
             scrollButtons="auto"
             aria-label="settings tabs"
+            className="dark:bg-[#1e293b]  "
           >
-            <Tab label="General Settings" {...a11yProps(0)} />
-            <Tab label="User Settings" {...a11yProps(1)} />
-            <Tab label="Financial Settings" {...a11yProps(2)} />
+            <Tab
+              label="General Settings"
+              {...a11yProps(0)}
+              className="dark:text-[#f8fafc]"
+            />
+            <Tab
+              label="User Settings"
+              {...a11yProps(1)}
+              className="dark:text-[#f8fafc]"
+            />
+            <Tab
+              label="Financial Settings"
+              {...a11yProps(2)}
+              className="dark:text-[#f8fafc]"
+            />
           </Tabs>
         </Box>
 

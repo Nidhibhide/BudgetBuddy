@@ -11,11 +11,14 @@ const create = async (req: Request, res: Response) => {
   try {
     const currentBudget = await budget.findOne({ user: userId });
 
-    if (type === "Expense") {
-      if (!currentBudget || currentBudget.budget < amount) {
-        return JsonOne(res, 400, "Insufficient budget", false);
-      }
+    if (
+      type === "Expense" &&
+      (!currentBudget || currentBudget.budget < amount)
+    ) {
+      return JsonOne(res, 400, "Insufficient budget", false);
     }
+
+    const value = type === "Income" ? amount : -amount;
 
     const data = await expense.create({
       title,
@@ -25,29 +28,32 @@ const create = async (req: Request, res: Response) => {
       user: userId,
       description,
     });
-    if (!data) {
-      return JsonOne(res, 500, "Failed to add new entry", false);
-    }
 
-    const value = type === "Income" ? amount : -amount;
-    const newLimit = value * 0.8; //default limit
-    // Update or create budget
+    const newBudget = (currentBudget?.budget ?? 0) + value;
+    const newLimit = newBudget * 0.8;
+
     const updatedBudget = await budget.findOneAndUpdate(
       { user: userId },
       {
-        $inc: { budget: value },
-        $set: { limit: newLimit },
+        budget: newBudget,
+        limit: newLimit,
       },
       { new: true, upsert: true }
     );
+
     if (!updatedBudget) {
       return JsonOne(res, 500, "Failed to update budget", false);
     }
-    await data.save();
 
-    JsonOne(res, 201, "New entry added", true);
+    JsonOne(res, 201, "New entry added", true, updatedBudget);
   } catch (error) {
-    JsonOne(res, 500, "unexpected error occurred while add new entry", false);
+    console.error(error);
+    JsonOne(
+      res,
+      500,
+      "Unexpected error occurred while adding new entry",
+      false
+    );
   }
 };
 
@@ -113,6 +119,7 @@ const getAll = async (req: Request, res: Response) => {
   }
 };
 
+//i will accept category of expense set deleted true of that expenses 
 const softDelete = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;

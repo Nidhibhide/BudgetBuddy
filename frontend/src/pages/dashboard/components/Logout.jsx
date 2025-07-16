@@ -7,7 +7,6 @@ const Logout = () => {
   const auth = authStore((state) => state.logout);
   const app = appStore((state) => state.logout);
   const navigate = useNavigate();
-
   useEffect(() => {
     const LogoutFunc = async () => {
       try {

@@ -1,4 +1,5 @@
 import { getbudget, getCategories } from "../api";
+import { CATEGORIES } from "../../../shared/constants";
 export const setLimitFromAPI = async (setLimit) => {
   try {
     const res = await getbudget();
@@ -12,7 +13,7 @@ export const setLimitFromAPI = async (setLimit) => {
 export const setCategoryFromAPI = async (setCategories) => {
   try {
     const res = await getCategories();
-    const names = res?.data?.names || [];
+    const names = res?.data?.names || CATEGORIES;
     setCategories(names);
   } catch (e) {
     console.error("Error fetching categories:", e);

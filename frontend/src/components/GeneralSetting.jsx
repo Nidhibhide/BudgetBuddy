@@ -28,7 +28,7 @@ const GeneralSetting = () => {
   return (
     <div className=" flex flex-col items-center justify-center gap-6">
       <h1 className="text-xl font-semibold ">General Setting</h1>
-      <div className="w-[600px] flex flex-col gap-4 ">
+      <div className="w-[600px] flex flex-col gap-4  ">
         <SelectBox
           label="Set Currency"
           value={currency}

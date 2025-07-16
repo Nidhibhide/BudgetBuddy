@@ -6,7 +6,8 @@ import {
   MenuItem,
   Select,
   Checkbox,
-  ListItemText,TextField
+  ListItemText,
+  TextField,
 } from "@mui/material";
 import { useField } from "formik";
 
@@ -14,14 +15,19 @@ export const SelectBox = ({ label, value, options, onChange }) => {
   return (
     <Box sx={{ minWidth: 120 }}>
       <FormControl fullWidth size="small">
-        <InputLabel>{label}</InputLabel>
+        <InputLabel className="text-gray-700 dark:text-gray-300">
+          {label}
+        </InputLabel>
+
         <Select
           value={value}
           label={label}
           onChange={onChange}
+          className="bg-white text-black dark:bg-gray-900 dark:text-white"
           MenuProps={{
-            disablePortal: true, // ✅ prevent modal from closing on select
+            disablePortal: true,
             PaperProps: {
+              className: "bg-white dark:bg-gray-800 text-black dark:text-white",
               style: {
                 maxHeight: 48 * 4.5,
               },
@@ -29,7 +35,11 @@ export const SelectBox = ({ label, value, options, onChange }) => {
           }}
         >
           {options.map((option) => (
-            <MenuItem key={option} value={option}>
+            <MenuItem
+              key={option}
+              value={option}
+              className="text-black dark:text-white dark:hover:bg-gray-700"
+            >
               {option}
             </MenuItem>
           ))}
@@ -43,18 +53,25 @@ export const InputBox = ({ label, name, type = "text" }) => {
   const [field, meta] = useField(name);
 
   return (
-    <TextField
-      {...field}
-      type={type}
-      label={label}
-      variant="standard"
-      error={meta.touched && Boolean(meta.error)}
-      helperText={meta.touched && meta.error}
-      fullWidth
-    />
+    <div className="w-full p-2 rounded bg-white text-black dark:bg-gray-900 dark:text-white">
+      <TextField
+        {...field}
+        type={type}
+        label={label}
+        variant="standard"
+        error={meta.touched && Boolean(meta.error)}
+        helperText={meta.touched && meta.error}
+        fullWidth
+        InputProps={{
+          className: "text-black dark:text-white",
+        }}
+        InputLabelProps={{
+          className: "text-gray-700 dark:text-gray-300",
+        }}
+      />
+    </div>
   );
 };
-
 export const Button = ({
   children,
   onClick,
@@ -74,34 +91,41 @@ export const Button = ({
     </button>
   );
 };
+
 export const MultiSelect = ({
   label,
   options,
   selected = [],
   onChange,
   error,
-  helperText,
 }) => {
   return (
     <FormControl fullWidth size="small" variant="outlined" error={!!error}>
-      <InputLabel>{label}</InputLabel>
+      <InputLabel className="text-gray-700 dark:text-gray-300">
+        {label}
+      </InputLabel>
+
       <Select
         multiple
         value={selected}
         onChange={onChange}
         label={label}
         renderValue={(selected) => selected.join(", ")}
+        className="bg-white text-black dark:bg-gray-900 dark:text-white"
         MenuProps={{
-          disablePortal: true, // ✅ prevent modal from closing on select
+          disablePortal: true,
           PaperProps: {
-            style: {
-              maxHeight: 48 * 4.5,
-            },
+            className: "bg-white dark:bg-gray-800 text-black dark:text-white",
+            style: { maxHeight: 48 * 4.5 },
           },
         }}
       >
         {options.map((option) => (
-          <MenuItem key={option} value={option}>
+          <MenuItem
+            key={option}
+            value={option}
+            className="text-black dark:text-white"
+          >
             <Checkbox checked={selected.includes(option)} />
             <ListItemText primary={option} />
           </MenuItem>
@@ -110,7 +134,6 @@ export const MultiSelect = ({
     </FormControl>
   );
 };
-
 export const Tooltip = ({ label, children }) => {
   return (
     <div className="relative group inline-block cursor-pointer">

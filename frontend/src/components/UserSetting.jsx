@@ -73,7 +73,7 @@ const UserSetting = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center gap-10">
+    <div className="flex flex-col items-center justify-center gap-10 ">
       <h1 className="text-xl font-semibold">User Settings</h1>
       <Formik
         initialValues={{
