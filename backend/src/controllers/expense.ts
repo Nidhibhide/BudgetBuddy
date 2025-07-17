@@ -30,13 +30,13 @@ const create = async (req: Request, res: Response) => {
     });
 
     const newBudget = (currentBudget?.budget ?? 0) + value;
-    const newLimit = newBudget * 0.8;
+    // const newLimit = Number(process.env.LIMIT) || 10000;
 
     const updatedBudget = await budget.findOneAndUpdate(
       { user: userId },
       {
         budget: newBudget,
-        limit: newLimit,
+        // limit: newLimit,
       },
       { new: true, upsert: true }
     );
@@ -119,7 +119,7 @@ const getAll = async (req: Request, res: Response) => {
   }
 };
 
-//i will accept category of expense set deleted true of that expenses 
+//i will accept category of expense set deleted true of that expenses
 const softDelete = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;

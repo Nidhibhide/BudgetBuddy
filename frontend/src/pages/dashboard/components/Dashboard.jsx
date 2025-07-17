@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -14,7 +16,17 @@ import { Button, Tooltip } from "../../../components";
 ChartJS.register(ArcElement, ChartTip, Legend);
 ChartJS.register(BarElement, CategoryScale, LinearScale, ChartTip, Legend);
 const Dashboard = () => {
-    const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    const firstTimer = setTimeout(() => {
+      setOpen(true);
+    }, 3000);
+    return () => {
+      clearTimeout(firstTimer);
+    };
+  }, []);
+
+  const navigate = useNavigate();
   return (
     <div className="flex flex-col m-4 ">
       {/* <h1 className="text-3xl font-medium">Welcome {user?.name} !</h1>{" "} */}

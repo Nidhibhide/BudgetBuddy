@@ -13,9 +13,6 @@ const edit = async (req: Request, res: Response) => {
     if (!existingBudget) {
       return JsonOne(res, 404, "Budget record not found", false);
     }
-    if (limit > existingBudget.budget * 0.8) {
-      return JsonOne(res, 400, "Limit too high for current budget", false);
-    }
 
     const updatedBudget = await budget.findOneAndUpdate(
       { user: userId },

@@ -96,7 +96,7 @@ const FinancialSetting = () => {
 
       <Formik
         initialValues={{
-          limit: limit || "",
+          limit: limit ?? "",
           names: categories || [],
         }}
         validationSchema={validationSchema}

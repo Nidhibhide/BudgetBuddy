@@ -53,7 +53,7 @@ export const InputBox = ({ label, name, type = "text" }) => {
   const [field, meta] = useField(name);
 
   return (
-    <div className="w-full p-2 rounded bg-white text-black dark:bg-gray-900 dark:text-white">
+    <div className="w-full p-2 rounded  text-black dark:bg-gray-900 dark:text-white">
       <TextField
         {...field}
         type={type}
