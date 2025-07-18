@@ -66,3 +66,10 @@ export const useHandleResponse = () => {
 
   return Response;
 };
+
+export const getDiffCategories = (oldList, newList) => {
+  return {
+    added: newList.filter((item) => !oldList.includes(item)),
+    removed: oldList.filter((item) => !newList.includes(item)),
+  };
+};

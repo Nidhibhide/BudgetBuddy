@@ -19,3 +19,26 @@ export const getAllExpense = async (filters) => {
     );
   }
 };
+export const getCount = async (categories) => {
+  try {
+    const res = await globalaxios.post("/expense/get-count", categories);
+    return res.data;
+  } catch (err) {
+    return (
+      err.response || { message: "Unexpected error occurred", status: 500 }
+    );
+  }
+};
+export const softdelete = async (categories) => {
+  try {
+    const res = await globalaxios.put("/expense/delete", categories);
+    return res.data;
+  } catch (err) {
+    return (
+      err.response?.data || {
+        message: "Unexpected error occurred",
+        statusCode: 500,
+      }
+    );
+  }
+};

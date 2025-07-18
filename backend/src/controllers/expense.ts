@@ -119,32 +119,34 @@ const getAll = async (req: Request, res: Response) => {
   }
 };
 
-//i will accept category of expense set deleted true of that expenses
 const softDelete = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const { categories } = req.body;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return JsonOne(res, 400, "Invalid expense ID", false);
+    if (!categories?.length) {
+      return JsonOne(res, 400, "No categories provided", false);
     }
 
-    const deletedExpense = await expense.findByIdAndUpdate(
-      id,
-      { isDeleted: true },
-      { new: true }
+    const result = await expense.updateMany(
+      { category: { $in: categories }, isDeleted: false },
+      { isDeleted: true }
     );
-
-    if (!deletedExpense) {
-      return JsonOne(res, 404, "Expense not found", false);
+    if (result.modifiedCount === 0) {
+      return JsonOne(res, 404, "No matching expenses found to delete", false);
     }
 
-    return JsonOne(res, 200, "Expense deleted successfully", true);
+    return JsonOne(
+      res,
+      200,
+      `${result.modifiedCount} records deleted successfully`,
+      true
+    );
   } catch (error) {
-    console.error("Soft delete error:", error);
-
-    JsonOne(res, 500, "unexpected error occurred while delete expense", false);
+    console.error("Error while deleting records:", error);
+    return JsonOne(res, 500, "Something went wrong", false);
   }
 };
+
 const restore = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -197,4 +199,43 @@ const edit = async (req: Request, res: Response) => {
   }
 };
 
-export { create, getAll, softDelete, restore, edit };
+//get count of records
+const getCount = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?._id;
+    const categories = req.body; 
+    if (!categories || categories.length === 0) {
+      return JsonOne(res, 400, "No categories provided", false);
+    }
+
+    const matched = await expense.aggregate([
+      {
+        $match: {
+          user: userId,
+          isDeleted: false,
+          category: { $in: categories },
+        },
+      },
+      {
+        $group: {
+          _id: "$category",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const result = Object.fromEntries(
+      categories.map((cat: string) => {
+        const found = matched.find((m) => m._id === cat);
+        return [cat, found?.count || 0];
+      })
+    );
+    console.log(result);
+    return JsonOne(res, 200, "Fetched count", true, result);
+  } catch (err) {
+    console.error("Error fetching category counts:", err);
+    JsonOne(res, 500, "unexpected error occurred while fetching", false);
+  }
+};
+
+export { create, getAll, softDelete, restore, edit, getCount };

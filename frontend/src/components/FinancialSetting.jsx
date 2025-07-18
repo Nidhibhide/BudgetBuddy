@@ -7,15 +7,21 @@ import {
   showError,
   useHandleResponse,
   MultiSelect,
+  WarningModal,
+  getDiffCategories,
 } from "./index";
-import { createCategory, editbudget } from "../api";
+import { createCategory, editbudget, getCount, softdelete } from "../api";
 
 import { appStore } from "../store";
-import { CATEGORY_LIST } from "../../../shared/constants";
+import { CATEGORIES, CATEGORY_LIST } from "../../../shared/constants";
 
 const FinancialSetting = () => {
   const [loading, setLoading] = useState(false);
   const setCategories = appStore((state) => state.setCategories);
+  const [showModal, setShowModal] = useState(false);
+  const [deletedCategories, setDeletedCategories] = useState([]);
+  const [newCategories, setNewCategories] = useState([]);
+  const [data, setData] = useState(null);
   const setLimit = appStore((state) => state.setLimit);
   const categories = appStore((state) => state.categories);
   const limit = appStore((state) => state.limit);
@@ -29,66 +35,56 @@ const FinancialSetting = () => {
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
-      const { names, limit: newLimit } = values;
+      const { names: updatedCategories, limit: newLimit } = values;
+      // Update budget limit if changed
       if (Number(newLimit) !== Number(limit)) {
-        const response = await editbudget({ limit: Number(newLimit) });
+        const res = await editbudget({ limit: Number(newLimit) });
         setLimit(newLimit);
-        Response({ response });
+        Response({ response: res });
       }
 
       if (
-        names.length !== categories.length ||
-        !names.every((name) => categories.includes(name))
+        updatedCategories.length !== categories.length ||
+        !updatedCategories.every((name) => categories.includes(name))
       ) {
-        const response = await createCategory({ names });
-        setCategories(names);
-        Response({ response });
+        const { added: addedCategories, removed: removedCategories } =
+          getDiffCategories(categories, updatedCategories);
+
+        setDeletedCategories(removedCategories);
+        setNewCategories(updatedCategories);
+        const res = await getCount(removedCategories);
+        if (res?.statusCode === 200) {
+          const hasRecords = Object.values(res?.data).some(
+            (count) => count !== 0
+          );
+          if (hasRecords) {
+            setData(res.data);
+            setShowModal(true);
+          }
+          return;
+        }
       }
-    } catch (err) {
-      showError("Failed to save changes");
+    } catch (error) {
+      showError(error.message);
     } finally {
       setLoading(false);
     }
   };
-//   const handleSubmit = async (values) => {
-//   try {
-//     setLoading(true);
-//     const { names: newCategories, limit: newLimit } = values;
+  const handleModalConfirm = async () => {
+    try {
+      let res;
+      if (deletedCategories.length > 0) {
+        res = await softdelete({ categories: deletedCategories });
+        console.log(res);
+      }
 
-//     // Update budget limit if changed
-//     if (Number(newLimit) !== Number(limit)) {
-//       const res = await editbudget({ limit: Number(newLimit) });
-//       setLimit(newLimit);
-//       Response({ response: res });
-//     }
-
-//     // Find new categories (max 4)
-//     const addedCategories = newCategories.filter(
-//       (name) => !categories.includes(name)
-//     );
-
-//     if (addedCategories.length > 0) {
-//       // Get and delete records for each new category
-//       for (const category of addedCategories) {
-//         const { data = [] } = await getAllByCategory(category);
-//         if (data.length > 0) {
-//           await deleteByCategory(category);
-//         }
-//       }
-
-//       // Update the category list
-//       const res = await createCategory({ names: newCategories });
-//       setCategories(newCategories);
-//       Response({ response: res });
-//     }
-
-//   } catch (error) {
-//     showError("Failed to save changes");
-//   } finally {
-//     setLoading(false);
-//   }
-// };
-
+      const response = await createCategory({ names: newCategories });
+      setCategories(newCategories);
+      Response({ response });
+    } catch (error) {
+      showError(error.message);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center gap-10">
@@ -97,7 +93,7 @@ const FinancialSetting = () => {
       <Formik
         initialValues={{
           limit: limit ?? "",
-          names: categories || [],
+          names: categories.length > 0 ? categories : CATEGORIES,
         }}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
@@ -127,6 +123,13 @@ const FinancialSetting = () => {
           </Form>
         )}
       </Formik>
+      {showModal && data && (
+        <WarningModal
+          data={data}
+          onConfirm={handleModalConfirm}
+          onCancel={() => setShowModal(false)}
+        />
+      )}
     </div>
   );
 };

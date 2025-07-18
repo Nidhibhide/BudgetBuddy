@@ -4,6 +4,7 @@ import {
   softDelete,
   restore,
   edit,
+  getCount,
 } from "../controllers/expense";
 import express from "express";
 import IsLoggeedIn from "../middlewares/TokenAuth";
@@ -14,8 +15,8 @@ const router = express.Router();
 
 router.post("/create", IsLoggeedIn, ExpenseMid, create);
 router.get("/getAll", IsLoggeedIn, getAll);
-
-router.put("/delete/:id", IsLoggeedIn, softDelete);
+router.post("/get-count", IsLoggeedIn, getCount);
+router.put("/delete", IsLoggeedIn, softDelete);
 router.put("/edit/:id", IsLoggeedIn, ExpenseMid, edit);
 router.put("/restore/:id", IsLoggeedIn, restore);
 

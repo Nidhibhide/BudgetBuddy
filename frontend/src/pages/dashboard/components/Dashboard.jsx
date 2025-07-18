@@ -12,10 +12,61 @@ import {
   LinearScale,
 } from "chart.js";
 import { IoAddSharp } from "react-icons/io5";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import CardActionArea from "@mui/material/CardActionArea";
+// import {
+//   AccountBalanceWalletOutlined,
+//   TrendingDown,
+//   TrendingUp,
+//   ReceiptOutlined,
+// } from '@mui/icons-material';
+import {
+  MdAccountBalanceWallet,
+  MdTrendingDown,
+  MdTrendingUp,
+  MdReceipt,
+} from "react-icons/md";
+
 import { Button, Tooltip } from "../../../components";
 ChartJS.register(ArcElement, ChartTip, Legend);
 ChartJS.register(BarElement, CategoryScale, LinearScale, ChartTip, Legend);
 const Dashboard = () => {
+  const cards = [
+    {
+      id: 1,
+      title: "Total Budget",
+      value: "₹4,200",
+      subtext: 1
+        ? `Limit: ₹${4000} · Remaining: ₹${5000 - 4200}`
+        : "No limit set · Tracking only",
+      icon: <MdAccountBalanceWallet size={30} className="text-blue-500" />,
+    },
+    {
+      id: 2,
+      title: "Spent",
+      value: "₹4,200",
+      subtext: "42% of budget used",
+      icon: <MdTrendingDown size={30} className="text-red-500" />,
+    },
+    {
+      id: 3,
+      title: "Remaining",
+      value: "₹5,800",
+      subtext: "58% left to use",
+      icon: <MdTrendingUp size={30} className="text-green-500" />,
+    },
+    {
+      id: 4,
+      title: "Transactions",
+      value: "12",
+      subtext: "Last updated: 16 Jul",
+      icon: <MdReceipt size={30} className="text-gray-500" />,
+    },
+  ];
+
   const [open, setOpen] = useState(false);
   useEffect(() => {
     const firstTimer = setTimeout(() => {
@@ -25,6 +76,7 @@ const Dashboard = () => {
       clearTimeout(firstTimer);
     };
   }, []);
+  const [selectedCard, setSelectedCard] = useState(0);
 
   const navigate = useNavigate();
   return (
@@ -44,6 +96,49 @@ const Dashboard = () => {
           </Button>
         </Tooltip>
       </div>
+
+      <Box
+        sx={{
+          width: "100%",
+          display: "grid",
+          gridTemplateColumns:
+            "repeat(auto-fill, minmax(min(220px, 100%), 1fr))",
+          gap: 2,
+        }}
+      >
+        {cards.map((card, index) => (
+          <Card key={card.id}>
+            <CardActionArea
+              onClick={() => setSelectedCard(index)}
+              data-active={selectedCard === index ? "" : undefined}
+              sx={{
+                height: "100%",
+                "&[data-active]": {
+                  backgroundColor: "action.selected",
+                  "&:hover": {
+                    backgroundColor: "action.selectedHover",
+                  },
+                },
+              }}
+            >
+              <CardContent sx={{ height: "100%" }}>
+                <Box display="flex" alignItems="center" gap={1} mb={1}>
+                  {card.icon}
+                  <Typography variant="body1" fontWeight={600}>
+                    {card.title}
+                  </Typography>
+                </Box>
+                <Typography variant="h6" gutterBottom>
+                  {card.value}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {card.subtext}
+                </Typography>
+              </CardContent>
+            </CardActionArea>
+          </Card>
+        ))}
+      </Box>
 
       {/* <div className="flex pt-6 gap-5 ">
         <Piechart />

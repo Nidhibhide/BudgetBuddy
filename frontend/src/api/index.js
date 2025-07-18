@@ -9,7 +9,7 @@ import {
   checkToken,
   refreshToken,
 } from "./user";
-import { createExpense, getAllExpense } from "./expense";
+import { createExpense, getAllExpense,getCount,softdelete } from "./expense";
 import { createCategory,getCategories } from "./category";
 import { editbudget, getbudget } from "./budget";
 
@@ -28,5 +28,6 @@ export {
   getAllExpense,
   editbudget,
   getbudget,
-  getCategories
+  getCategories,
+  getCount,softdelete
 };

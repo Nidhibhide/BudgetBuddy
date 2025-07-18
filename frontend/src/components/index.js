@@ -15,8 +15,10 @@ import {
   ExportToPdf,
   callToStore,
   useHandleResponse,
+  getDiffCategories
 } from "./Utils";
 import UserSetting from "./UserSetting";
+import WarningModal from "./WarningModal";
 import {setLimitFromAPI,setCategoryFromAPI} from "./ApiCalls"
 export {
   InputBox,
@@ -34,5 +36,5 @@ export {
   FinancialSetting,
   MultiSelect,
   callToStore,
-  useHandleResponse,setLimitFromAPI,setCategoryFromAPI
+  useHandleResponse,setLimitFromAPI,setCategoryFromAPI,WarningModal,getDiffCategories
 };
