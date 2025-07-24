@@ -6,9 +6,10 @@ import { signin, signinwithGoogle, getMe } from "../../../api";
 import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import { callToStore } from "../../../components";
-
+import { authStore } from "../../../store";
 const SignIn = () => {
   const [loading, setLoading] = useState(false);
+  const setUser = authStore((state) => state.setUser);
   const navigate = useNavigate();
   // validation schema
   const validationSchema = Yup.object({
@@ -64,8 +65,7 @@ const SignIn = () => {
         const userRes = await getMe();
         const { statusCode: getMeStatus, data } = userRes;
         if (getMeStatus === 200) {
-          console.log(data);
-          setUser(data);
+          callToStore(data);
         }
         setTimeout(() => navigate("/dashboard/home"), 3000);
       } else if (signinMsg) {

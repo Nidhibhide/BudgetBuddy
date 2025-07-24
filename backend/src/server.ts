@@ -11,7 +11,7 @@ import authRoutes from "./routes/authRoutes";
 import expenseRoutes from "./routes/expenseRoutes";
 import budgetRoutes from "./routes/budgetRoutes";
 import categoryRoutes from "./routes/categoryRoutes";
-
+import dashboardRoutes from "./routes/dashboardRoutes";
 const corsOptions = {
   origin: ["http://localhost:5173"],
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
@@ -44,7 +44,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/expense", expenseRoutes);
 app.use("/api/budget", budgetRoutes);
 app.use("/api/category", categoryRoutes);
-// app.use("/api/notification", notificationRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 const PORT = process.env.PORT || 8080;
 

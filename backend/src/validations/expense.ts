@@ -11,7 +11,7 @@ const expense = Joi.object({
   amount: numberValidator("Amount", 1, 100000, true),
   category: stringValidator("Category", 3, 30, true),
   type: selectValidator("Type", TYPES, true),
-  description: stringValidator("Description", 3, 30, false),
+  description: stringValidator("Description", 3, 30, false, /^[a-zA-Z0-9\s]+$/),
 });
 
 export { expense };

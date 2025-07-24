@@ -1,14 +1,15 @@
-import Joi, { string } from "joi";
+import Joi from "joi";
 
 // 1. String Validator
 export const stringValidator = (
   label: string,
   min: number,
   max: number,
-  required = false
+  required = false,
+  patternString: RegExp = /^[a-zA-Z\s]+$/
 ) => {
   let rule = Joi.string()
-    .pattern(/^[a-zA-Z\s]+$/)
+    .pattern(patternString)
     .min(min)
     .max(max)
     .messages({

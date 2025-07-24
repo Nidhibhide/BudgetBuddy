@@ -1,4 +1,4 @@
-import { Home, SignIn, Header, SignUp,SessionExpired } from "./pages/public";
+import { Home, SignIn, Header, SignUp, SessionExpired } from "./pages/public";
 import { Toaster } from "react-hot-toast";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import {

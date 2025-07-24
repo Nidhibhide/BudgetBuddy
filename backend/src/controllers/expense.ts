@@ -60,7 +60,7 @@ const create = async (req: Request, res: Response) => {
 const getAll = async (req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 5;
+    const limit = parseInt(req.query.limit as string) || 100;
     const sortOrder = req.query.sortOrder === "asc" ? 1 : -1;
     const month = req.query.month as string;
     const category = req.query.category as string;

@@ -48,7 +48,7 @@ const getOne = async (req: Request, res: Response) => {
     const userBudget = await budget.findOne({ user: userId });
 
     if (!userBudget) {
-      return JsonOne(res, 404, "Budget not found", false);
+      return JsonOne(res, 404, "Budget not found", false,0);
     }
 
     return JsonOne(res, 200, "Budget fetched successfully", true, userBudget);

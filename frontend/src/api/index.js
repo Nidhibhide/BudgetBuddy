@@ -9,11 +9,14 @@ import {
   checkToken,
   refreshToken,
 } from "./user";
-import { createExpense, getAllExpense,getCount,softdelete } from "./expense";
-import { createCategory,getCategories } from "./category";
+import { createExpense, getAllExpense, getCount, softdelete } from "./expense";
+import { createCategory, getCategories } from "./category";
 import { editbudget, getbudget } from "./budget";
+import { getTransactions, getCategoryData } from "./dashboard";
 
 export {
+  getTransactions,
+  getCategoryData,
   signin,
   signup,
   editUser,
@@ -29,5 +32,6 @@ export {
   editbudget,
   getbudget,
   getCategories,
-  getCount,softdelete
+  getCount,
+  softdelete,
 };

@@ -2,9 +2,11 @@ import React from "react";
 import toast from "react-hot-toast";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { MONTHS } from "../../../shared/constants";
 import { authStore, appStore } from "../store";
 import { useNavigate } from "react-router-dom";
 import { setLimitFromAPI, setCategoryFromAPI } from "./index";
+import { FaUtensils, FaShoppingBag, FaCar, FaHotel } from "react-icons/fa";
 
 export const showSuccess = (message = "Operation Success") => {
   toast.success(message);
@@ -72,4 +74,23 @@ export const getDiffCategories = (oldList, newList) => {
     added: newList.filter((item) => !oldList.includes(item)),
     removed: oldList.filter((item) => !newList.includes(item)),
   };
+};
+
+export function getLastSixMonths() {
+  const currentMonth = new Date().getMonth();
+  const result = [];
+
+  for (let i = 1; i <= 6; i++) {
+    const index = (currentMonth - i + 12) % 12;
+    result.push(MONTHS[index]);
+  }
+
+  return result;
+}
+
+export const categoryIcons = {
+  Food: <FaUtensils size={20} color="white" />,
+  Shopping: <FaShoppingBag size={20} color="white" />,
+  Transport: <FaCar size={20} color="white" />,
+  Hotel: <FaHotel size={20} color="white" />,
 };

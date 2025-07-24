@@ -53,7 +53,10 @@ function AddEntry() {
           .required("Description is required")
           .min(3, "At least 3 characters")
           .max(30, "At most 30 characters")
-          .matches(/^[a-zA-Z\s]+$/, "Only letters and spaces allowed");
+          .matches(
+            /^[a-zA-Z0-9\s]+$/,
+            "Only letters, numbers, and spaces allowed"
+          );
       }
       return schema.notRequired();
     }),
@@ -92,13 +95,15 @@ function AddEntry() {
   };
   return (
     <>
-      <Modal isOpen={isOpen} onOpenChange={handleOpenChange} className="dark:bg-[#000000] dark:border border-white">
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={handleOpenChange}
+        className="dark:bg-[#000000] dark:border border-white"
+      >
         <ModalContent className=" ">
           {() => (
             <>
-              <ModalHeader >
-                Add new Entry
-              </ModalHeader>
+              <ModalHeader>Add new Entry</ModalHeader>
               <ModalBody>
                 <Formik
                   initialValues={{
