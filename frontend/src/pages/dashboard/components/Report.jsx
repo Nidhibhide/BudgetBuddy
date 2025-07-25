@@ -7,13 +7,7 @@ import {
   TableRow,
   TableCell,
 } from "@heroui/react";
-import {
-  SelectBox,
-  showError,
-  showSuccess,
-  Button,
-  ExportToPdf,
-} from "../../../components";
+import { SelectBox, showError } from "../../../components";
 import { useNavigate } from "react-router-dom";
 import { getAllExpense } from "../../../api";
 import { MONTHS } from "../../../../../shared/constants";
@@ -46,15 +40,6 @@ const Report = () => {
       }
     } catch (err) {
       showError(err.message);
-    }
-  };
-  const handleClick = () => {
-    const response = ExportToPdf(previewRef);
-
-    if (response) {
-      showSuccess("PDF saved!");
-    } else {
-      showError("PDF export failed");
     }
   };
 
@@ -128,12 +113,6 @@ const Report = () => {
           onChange={(e) => setLimit(e.target.value)}
           options={["10", "50", "100"]}
         />
-      </div>
-
-      <div className="flex justify-center items-end mt-8">
-        <Button onClick={handleClick} width="w-[150px]">
-          Export as Pdf
-        </Button>
       </div>
     </div>
   );

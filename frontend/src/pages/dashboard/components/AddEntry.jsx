@@ -12,16 +12,18 @@ import {
   SelectBox,
   showSuccess,
   showError,
+  convertToINR,
 } from "../../../components";
 import { Formik } from "formik";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { createExpense } from "../../../api";
 import { TYPES } from "../../../../../shared/constants";
-import { appStore } from "../../../store";
+import { appStore, authStore } from "../../../store";
 function AddEntry() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const GET_CATEGORY = appStore((state) => state.categories);
+  const GET_CURRENCY = authStore((state) => state.user.currency);
   const setLimit = appStore((state) => state.setLimit);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -68,14 +70,19 @@ function AddEntry() {
 
   const handleCreate = async (values, { resetForm }) => {
     try {
+      const convertedAmount = await convertToINR(
+        Number(values.amount),
+        GET_CURRENCY
+      );
       const payload = {
         title: values.title,
-        amount: Number(values.amount),
+        amount: convertedAmount,
         category: values.category,
         description:
           values.category === "Others" ? values.description : undefined,
         type: values.type,
       };
+
       setLoading(true);
       const response = await createExpense(payload);
       const { message, statusCode, data } = response;
@@ -124,7 +131,7 @@ function AddEntry() {
 
                           <InputBox
                             name="amount"
-                            label="Enter Amount"
+                            label={`Enter Amount (${GET_CURRENCY})`}
                             type="number"
                           />
                           {values.category === "Others" && (

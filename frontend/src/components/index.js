@@ -12,23 +12,24 @@ import FinancialSetting from "./FinancialSetting";
 import {
   showSuccess,
   showError,
-  ExportToPdf,
   callToStore,
   useHandleResponse,
   getDiffCategories,
   getLastSixMonths,
   categoryIcons,
+  convertToINR
 } from "./Utils";
 import UserSetting from "./UserSetting";
 import WarningModal from "./WarningModal";
 import { setLimitFromAPI, setCategoryFromAPI } from "./ApiCalls";
-import DatePickerFunc from "./DatePickerFunc";
+import SmartTips from "./SmartTips";
 import ProgressBar from "./ProgressBar";
 import LatestTransaction from "./LatestTransactions";
 export {
   categoryIcons,
+  convertToINR,
   getLastSixMonths,
-  DatePickerFunc,
+  SmartTips,
   InputBox,
   Piechart,
   Cards,
@@ -39,7 +40,6 @@ export {
   showError,
   showSuccess,
   Tooltip,
-  ExportToPdf,
   UserSetting,
   FinancialSetting,
   MultiSelect,

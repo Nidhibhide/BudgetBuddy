@@ -8,7 +8,7 @@ const GeneralSetting = () => {
   const CurrentTheme = appStore((state) => state.theme);
   const Theme = appStore((state) => state.setTheme);
   const User = authStore((state) => state.user);
-
+  const setUser = authStore((state) => state.setUser);
   const [theme, setTheme] = useState(CurrentTheme);
   const [loading, setLoading] = useState(false);
   const [currency, setCurrency] = useState(User.currency);
@@ -18,6 +18,7 @@ const GeneralSetting = () => {
     try {
       setLoading(true);
       Theme(theme);
+      setUser({ currency: currency });
       const response = await editUser({ currency, email: User.email });
       Response({ response });
     } catch (error) {

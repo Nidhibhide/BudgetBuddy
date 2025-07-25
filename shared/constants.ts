@@ -35,3 +35,10 @@ export const CATEGORY_LIST = [
   "Entertainment",
   "Education",
 ];
+
+export const DEFAULT_TIPS = [
+  "📌 Stay consistent — tracking even small expenses gives you better control.",
+  "💡 Set a budget to clearly see how much you can save.",
+  "📊 Check your expense graphs regularly to spot overspending early.",
+  "💰 Budgeting isn’t about restriction, it’s about awareness and choice.",
+];

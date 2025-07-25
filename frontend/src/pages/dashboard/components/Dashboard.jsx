@@ -17,7 +17,7 @@ import {
   Cards,
   Piechart,
   Bargraph,
-  DatePickerFunc,
+  SmartTips,
   ProgressBar,
   LatestTransaction,
 } from "../../../components";
@@ -52,10 +52,10 @@ const Dashboard = () => {
       </div>
       <div className="flex gap-4 mt-4">
         <div className="w-[50%]">
-         <ProgressBar />
+          <ProgressBar />
         </div>
         <div className="w-[50%] ">
-          <ProgressBar />
+          <SmartTips />
         </div>
       </div>
       <div className="mt-4">

@@ -12,9 +12,16 @@ import {
 import { createExpense, getAllExpense, getCount, softdelete } from "./expense";
 import { createCategory, getCategories } from "./category";
 import { editbudget, getbudget } from "./budget";
-import { getTransactions, getCategoryData } from "./dashboard";
+import {
+  getTransactions,
+  getCategoryData,
+  getTips,
+  getBarChart,
+} from "./dashboard";
 
 export {
+  getBarChart,
+  getTips,
   getTransactions,
   getCategoryData,
   signin,

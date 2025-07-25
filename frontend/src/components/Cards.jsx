@@ -24,6 +24,7 @@ const Cards = () => {
     const fetchTransactions = async () => {
       try {
         const res = await getTransactions();
+
         setTransactionsData(res?.data);
       } catch (error) {
         console.error("Failed to load transactions:", error);
@@ -33,11 +34,16 @@ const Cards = () => {
     fetchBudget();
     fetchTransactions();
   }, []);
+  const originalBudget = parseFloat(
+    (budget?.budget + transactionsData?.totalExpense).toFixed(2)
+  );
+
+  console.log(originalBudget);
   const cards = [
     {
       id: 1,
       title: "Total Budget",
-      value: budget?.budget || 0,
+      value: originalBudget || 0,
       subtext:
         budget?.limit === 0 || !budget?.limit ? (
           <span>
@@ -67,7 +73,7 @@ const Cards = () => {
       value: transactionsData?.totalExpense,
       subtext: `${
         transactionsData?.totalExpense
-          ? Math.round((transactionsData.totalExpense / budget.budget) * 100)
+          ? Math.round((transactionsData.totalExpense / originalBudget) * 100)
           : 0
       }% of budget used`,
       icon: (
@@ -80,12 +86,16 @@ const Cards = () => {
     {
       id: 3,
       title: "Remaining",
-      value: budget ? `${budget.budget - transactionsData?.totalExpense}` : "0",
+      value: originalBudget
+        ? parseFloat(
+            (originalBudget - transactionsData?.totalExpense).toFixed(2)
+          )
+        : 0,
       subtext: `${
         budget
           ? Math.round(
-              ((budget.budget - transactionsData?.totalExpense) /
-                budget.budget) *
+              ((originalBudget - transactionsData?.totalExpense) /
+                originalBudget) *
                 100
             )
           : 0

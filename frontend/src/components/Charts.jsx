@@ -3,13 +3,38 @@ import { Bar } from "react-chartjs-2";
 import { appStore } from "../store";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
-import { getCategoryData } from "../api";
-import { CATEGORIES } from "../../../shared/constants";
+import { getBarChart, getCategoryData } from "../api";
+import { CATEGORIES, MONTHS } from "../../../shared/constants";
 import { getLastSixMonths } from "./index";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export const Bargraph = () => {
+  const [barChartData, setbarChartData] = useState([]);
+
+  useEffect(() => {
+    const fetchCategoryData = async () => {
+      try {
+        const res = await getBarChart();
+        console.log(res);
+        const data = res.data;
+
+        const finalData = getLastSixMonths().map((val) => {
+          console.log(val);
+          const found = data.find((item) => item.month === "July");
+          return {
+            totalExpense: found?.total || 0,
+          };
+        });
+        console.log(finalData);
+        setbarChartData(finalData);
+      } catch (error) {
+        console.error("Failed to load categories data:", error);
+      }
+    };
+
+    fetchCategoryData();
+  }, []);
   const data = {
     labels: getLastSixMonths(),
     datasets: [
@@ -56,7 +81,7 @@ export const Bargraph = () => {
 
   return (
     <div className="bg-gray-50 rounded-2xl shadow-md p-4">
-      <h2 className="text-xl font-semibold text-gray-800 mb-1">
+      <h2 className="text-lg font-semibold text-gray-800 mb-1">
         Monthly Income vs Expenses
       </h2>
       <p className="text-sm text-gray-500 mb-4 mx-4">
@@ -75,8 +100,8 @@ export const Piechart = () => {
     const fetchCategoryData = async () => {
       try {
         const res = await getCategoryData();
-        const data = res.data;
-
+        const data = res.data.result;
+        console.log(data);
         const finalData = CATEGORIES.map((cat) => {
           const found = data.find((item) => item.category === cat);
           return {
@@ -93,6 +118,8 @@ export const Piechart = () => {
     fetchCategoryData();
   }, []);
   const GET_CATEGORY = appStore((state) => state.categories);
+  const hasData = categorydata?.some((item) => item.totalExpense > 0);
+
   const data = {
     labels: GET_CATEGORY,
     datasets: [
@@ -112,7 +139,11 @@ export const Piechart = () => {
         Expense Breakdown
       </h2>
       <div className="lg:h-[350px] h-[300px]">
-        <Pie data={data} options={options} />
+        {hasData ? (
+          <Pie data={data} options={options} />
+        ) : (
+          <p className="text-gray-500 font-medium text-center pt-10">No expense data available</p>
+        )}
       </div>
       <p className="text-sm text-center text-gray-500 mt-2">
         Overview of spending by category
@@ -120,5 +151,3 @@ export const Piechart = () => {
     </div>
   );
 };
-
-

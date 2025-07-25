@@ -5,7 +5,10 @@ export const createExpense = async (data) => {
     return res.data;
   } catch (err) {
     return (
-      err.response || { message: "Unexpected error occurred", status: 500 }
+      err.response?.data || {
+        message: "Unexpected error occurred",
+        statusCode: 500,
+      }
     );
   }
 };
@@ -15,7 +18,10 @@ export const getAllExpense = async (filters) => {
     return res.data;
   } catch (err) {
     return (
-      err.response || { message: "Unexpected error occurred", status: 500 }
+      err.response?.data || {
+        message: "Unexpected error occurred",
+        statusCode: 500,
+      }
     );
   }
 };
@@ -25,7 +31,10 @@ export const getCount = async (categories) => {
     return res.data;
   } catch (err) {
     return (
-      err.response || { message: "Unexpected error occurred", status: 500 }
+      err.response?.data || {
+        message: "Unexpected error occurred",
+        statusCode: 500,
+      }
     );
   }
 };

@@ -1,44 +1,17 @@
 import React from "react";
 import toast from "react-hot-toast";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import { MONTHS } from "../../../shared/constants";
 import { authStore, appStore } from "../store";
 import { useNavigate } from "react-router-dom";
 import { setLimitFromAPI, setCategoryFromAPI } from "./index";
 import { FaUtensils, FaShoppingBag, FaCar, FaHotel } from "react-icons/fa";
+import axios from "axios";
 
 export const showSuccess = (message = "Operation Success") => {
   toast.success(message);
 };
 export const showError = (message = "Operation Failed") => {
   toast.error(message);
-};
-
-export const ExportToPdf = async (previewRef) => {
-  try {
-    const element = previewRef.current;
-
-    const canvas = await html2canvas(element, {
-      scale: 2,
-      useCORS: true,
-    });
-
-    const imgData = canvas.toDataURL("image/png");
-
-    const pdf = new jsPDF("p", "mm", "a4");
-    const imgProps = pdf.getImageProperties(imgData);
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save("report.pdf");
-
-    return true;
-  } catch (error) {
-    console.error("PDF Export failed:", error);
-    return false;
-  }
 };
 
 export const callToStore = async (data) => {
@@ -93,4 +66,23 @@ export const categoryIcons = {
   Shopping: <FaShoppingBag size={20} color="white" />,
   Transport: <FaCar size={20} color="white" />,
   Hotel: <FaHotel size={20} color="white" />,
+};
+
+export const convertToINR = async (amount, currency) => {
+  try {
+    if (currency === "INR") return amount;
+
+    const url = `https://api.frankfurter.app/latest?amount=${amount}&from=${currency}&to=INR`;
+
+    const response = await axios.get(url);
+    const data = response.data;
+    if (!data?.rates?.INR) {
+      throw new Error("Conversion failed or invalid currency.");
+    }
+    console.log(data.rates.INR)
+    return parseFloat(data.rates.INR.toFixed(2));
+  } catch (error) {
+    console.error("Conversion error:", error.message);
+    return 0;
+  }
 };
