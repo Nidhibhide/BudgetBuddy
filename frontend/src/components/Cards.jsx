@@ -38,7 +38,6 @@ const Cards = () => {
     (budget?.budget + transactionsData?.totalExpense).toFixed(2)
   );
 
-  console.log(originalBudget);
   const cards = [
     {
       id: 1,

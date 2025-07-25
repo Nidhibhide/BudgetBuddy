@@ -4,48 +4,48 @@ import { appStore } from "../store";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
 import { getBarChart, getCategoryData } from "../api";
-import { CATEGORIES, MONTHS } from "../../../shared/constants";
+import { CATEGORIES } from "../../../shared/constants";
 import { getLastSixMonths } from "./index";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export const Bargraph = () => {
-  const [barChartData, setbarChartData] = useState([]);
+  const [expenseData, setExpenseData] = useState([]);
+  const [incomeData, setIncomeData] = useState([]);
 
   useEffect(() => {
-    const fetchCategoryData = async () => {
+    const fetchBarChartData = async () => {
       try {
-        const res = await getBarChart();
-        console.log(res);
-        const data = res.data;
+        const { data } = await getBarChart();
+        const months = getLastSixMonths();
 
-        const finalData = getLastSixMonths().map((val) => {
-          console.log(val);
-          const found = data.find((item) => item.month === "July");
-          return {
-            totalExpense: found?.total || 0,
-          };
-        });
-        console.log(finalData);
-        setbarChartData(finalData);
+        const mapMonthlyData = (sourceData) =>
+          months.map((month) => {
+            const found = sourceData.find((item) => item.month === month);
+            return found?.total || 0;
+          });
+
+        setExpenseData(mapMonthlyData(data.formattedExpense));
+        setIncomeData(mapMonthlyData(data.formattedIncome));
       } catch (error) {
-        console.error("Failed to load categories data:", error);
+        console.error("Failed to load bar chart data:", error);
       }
     };
 
-    fetchCategoryData();
+    fetchBarChartData();
   }, []);
+
   const data = {
     labels: getLastSixMonths(),
     datasets: [
       {
         label: "Expenses",
-        data: [3000, 2800, 3200, 3100, 2900, 3300],
+        data: expenseData,
         backgroundColor: "#ef4444",
       },
       {
         label: "Income",
-        data: [5000, 5200, 5100, 5300, 5400, 5600],
+        data: incomeData,
         backgroundColor: "#4ade80",
       },
     ],
@@ -58,23 +58,17 @@ export const Bargraph = () => {
       legend: {
         position: "top",
         labels: {
-          color: "#374151", // Tailwind gray-700
-          font: {
-            size: 12,
-          },
+          color: "#374151", // gray-700
+          font: { size: 12 },
         },
       },
     },
     scales: {
       y: {
-        ticks: {
-          color: "#6b7280", // Tailwind gray-500
-        },
+        ticks: { color: "#6b7280" }, // gray-500
       },
       x: {
-        ticks: {
-          color: "#6b7280",
-        },
+        ticks: { color: "#6b7280" },
       },
     },
   };
@@ -101,7 +95,6 @@ export const Piechart = () => {
       try {
         const res = await getCategoryData();
         const data = res.data.result;
-        console.log(data);
         const finalData = CATEGORIES.map((cat) => {
           const found = data.find((item) => item.category === cat);
           return {
@@ -142,7 +135,9 @@ export const Piechart = () => {
         {hasData ? (
           <Pie data={data} options={options} />
         ) : (
-          <p className="text-gray-500 font-medium text-center pt-10">No expense data available</p>
+          <p className="text-gray-500 font-medium text-center pt-10">
+            No expense data available
+          </p>
         )}
       </div>
       <p className="text-sm text-center text-gray-500 mt-2">

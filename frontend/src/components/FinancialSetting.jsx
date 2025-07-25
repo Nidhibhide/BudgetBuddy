@@ -75,7 +75,6 @@ const FinancialSetting = () => {
       let res;
       if (deletedCategories.length > 0) {
         res = await softdelete({ categories: deletedCategories });
-        console.log(res);
       }
 
       const response = await createCategory({ names: newCategories });

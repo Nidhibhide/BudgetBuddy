@@ -79,7 +79,6 @@ export const convertToINR = async (amount, currency) => {
     if (!data?.rates?.INR) {
       throw new Error("Conversion failed or invalid currency.");
     }
-    console.log(data.rates.INR)
     return parseFloat(data.rates.INR.toFixed(2));
   } catch (error) {
     console.error("Conversion error:", error.message);
