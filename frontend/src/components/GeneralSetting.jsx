@@ -1,12 +1,20 @@
 import React, { useState } from "react";
-import { SelectBox, showError, Button, useHandleResponse } from "./index";
+import {
+  SelectBox,
+  showError,
+  Button,
+  useHandleResponse,
+  convertCurrency,
+} from "./index";
 import { CURRENCIES, THEMES } from "../../../shared/constants";
 import { appStore, authStore } from "../store";
 import { editUser } from "../api";
 
 const GeneralSetting = () => {
   const CurrentTheme = appStore((state) => state.theme);
+  const CurrentLimit = appStore((state) => state.limit);
   const Theme = appStore((state) => state.setTheme);
+  const setLimit = appStore((state) => state.setLimit);
   const User = authStore((state) => state.user);
   const setUser = authStore((state) => state.setUser);
   const [theme, setTheme] = useState(CurrentTheme);
@@ -19,6 +27,16 @@ const GeneralSetting = () => {
       setLoading(true);
       Theme(theme);
       setUser({ currency: currency });
+      if (User?.currency !== currency) {
+        const convertedLimit = await convertCurrency(
+          Number(CurrentLimit),
+          currency,
+          User.currency
+        );
+
+        setLimit(convertedLimit);
+      }
+
       const response = await editUser({ currency, email: User.email });
       Response({ response });
     } catch (error) {

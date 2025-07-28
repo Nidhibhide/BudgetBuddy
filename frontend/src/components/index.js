@@ -17,7 +17,7 @@ import {
   getDiffCategories,
   getLastSixMonths,
   categoryIcons,
-  convertToINR
+  convertCurrency,
 } from "./Utils";
 import UserSetting from "./UserSetting";
 import WarningModal from "./WarningModal";
@@ -27,7 +27,7 @@ import ProgressBar from "./ProgressBar";
 import LatestTransaction from "./LatestTransactions";
 export {
   categoryIcons,
-  convertToINR,
+  convertCurrency,
   getLastSixMonths,
   SmartTips,
   InputBox,

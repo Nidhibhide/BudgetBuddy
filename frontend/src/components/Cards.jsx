@@ -6,43 +6,71 @@ import {
 } from "@heroicons/react/24/solid";
 import { getbudget, getTransactions } from "../api";
 import React, { useEffect, useState } from "react";
+import { convertCurrency } from "./index";
+import { authStore } from "../store";
 
 const Cards = () => {
   const [transactionsData, setTransactionsData] = useState();
+  const User = authStore((state) => state.user);
+  const [convertedValues, setConvertedValues] = useState({
+    budget: 0,
+    spent: 0,
+    remaining: 0,
+  });
+  const [originalBudget, setOriginalBudget] = useState(0);
+
   const [budget, setBudget] = useState();
   useEffect(() => {
-    const fetchBudget = async () => {
+    const fetchData = async () => {
       try {
-        const res = await getbudget();
+        const budgetRes = await getbudget();
+        const transactionRes = await getTransactions();
 
-        setBudget(res?.data);
+        const budgetData = budgetRes?.data;
+        const transactionData = transactionRes?.data;
+
+        setBudget(budgetData);
+        setTransactionsData(transactionData);
+
+        const originalBudget = parseFloat(
+          (budgetData?.budget + transactionData?.totalExpense).toFixed(2)
+        );
+        setOriginalBudget(originalBudget);
+
+        const [convertedBudget, convertedSpent, convertedRemaining] =
+          await Promise.all([
+            convertCurrency(originalBudget, User?.currency, "INR"),
+            convertCurrency(
+              transactionData?.totalExpense,
+              User?.currency,
+              "INR"
+            ),
+            convertCurrency(
+              originalBudget - transactionData?.totalExpense,
+              User?.currency,
+              "INR"
+            ),
+          ]);
+
+        setConvertedValues({
+          budget: convertedBudget,
+          spent: convertedSpent,
+          remaining: convertedRemaining,
+        });
       } catch (error) {
-        console.error("Failed to load Budget summary:", error);
+        console.error("Failed to load data:", error);
       }
     };
 
-    const fetchTransactions = async () => {
-      try {
-        const res = await getTransactions();
-
-        setTransactionsData(res?.data);
-      } catch (error) {
-        console.error("Failed to load transactions:", error);
-      }
-    };
-
-    fetchBudget();
-    fetchTransactions();
-  }, []);
-  const originalBudget = parseFloat(
-    (budget?.budget + transactionsData?.totalExpense).toFixed(2)
-  );
+    fetchData();
+  }, [User?.currency]);
+  if (!budget || !transactionsData) return null;
 
   const cards = [
     {
       id: 1,
       title: "Total Budget",
-      value: originalBudget || 0,
+      value: convertedValues.budget + " " + User?.currency,
       subtext:
         budget?.limit === 0 || !budget?.limit ? (
           <span>
@@ -57,7 +85,7 @@ const Cards = () => {
         ) : (
           <span>
             Limit : {budget.limit} · Remaining :{" "}
-            {budget.limit - transactionsData?.totalExpense}
+            {(budget.limit - transactionsData?.totalExpense).toFixed(2)}
           </span>
         ),
 
@@ -69,7 +97,7 @@ const Cards = () => {
     {
       id: 2,
       title: "Spent",
-      value: transactionsData?.totalExpense,
+      value: convertedValues.spent + " " + User?.currency,
       subtext: `${
         transactionsData?.totalExpense
           ? Math.round((transactionsData.totalExpense / originalBudget) * 100)
@@ -86,10 +114,8 @@ const Cards = () => {
       id: 3,
       title: "Remaining",
       value: originalBudget
-        ? parseFloat(
-            (originalBudget - transactionsData?.totalExpense).toFixed(2)
-          )
-        : 0,
+        ? `${convertedValues.remaining.toFixed(2)} ${User?.currency}`
+        : "0",
       subtext: `${
         budget
           ? Math.round(

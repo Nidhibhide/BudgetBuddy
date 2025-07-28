@@ -2,16 +2,17 @@ import React, { useState, useEffect } from "react";
 import { Sidebar } from "../index";
 import { Outlet } from "react-router-dom";
 import { IoMenu, IoCloseSharp } from "react-icons/io5";
-import { appStore } from "../../../store";
+import { appStore, authStore } from "../../../store";
 import Snackbar from "@mui/material/Snackbar";
-import MuiAlert from "@mui/material/Alert";
-import { getbudget } from "../../../api";
+import { convertCurrency } from "../../../components";
+import { getTransactions } from "../../../api";
 const Welcome = () => {
   const theme = appStore((state) => state.theme);
   const limit = appStore((state) => state.limit);
+  const user = authStore((state) => state.user);
   const [showSidebar, setShowSidebar] = useState(false);
   const [open, setOpen] = useState(false);
-  const [budget, setBudget] = useState(0);
+  const [totalExpense, setTotalExpense] = useState(0);
   useEffect(() => {
     const root = document.documentElement;
     if (theme === "Dark") {
@@ -31,13 +32,25 @@ const Welcome = () => {
 
   const fetchBudgetData = async () => {
     try {
-      const res = await getbudget();
-      setBudget(res?.data?.budget || 0);
-      if (limit !== 0 && res?.data?.budget > limit) {
+      const res = await getTransactions();
+      console.log(res);
+      let convertedExpense = Number(res?.data?.totalExpense) || 0;
+
+      if (user?.currency !== "INR") {
+        convertedExpense = await convertCurrency(
+          convertedExpense,
+          user?.currency,
+          "INR"
+        );
+      }
+
+      setTotalExpense(convertedExpense);
+
+      if (limit !== 0 && convertedExpense < limit) {
         setOpen(true);
       }
     } catch (error) {
-      console.error("Error fetching budget:", error);
+      console.error("Error fetching total Expense:", error);
     }
   };
 
@@ -83,7 +96,9 @@ const Welcome = () => {
         onClose={() => setOpen(false)}
       >
         <div className="bg-yellow-200 text-yellow-900 p-3 rounded w-full max-w-md shadow">
-          ⚠️ You’ve exceeded your ₹{limit} limit! Total spent: ₹{budget}.
+          ⚠️ You’ve exceeded your {Number(limit).toFixed(2)} {user?.currency}{" "}
+          limit! Total spent: {Number(totalExpense).toFixed(2)} {user?.currency}
+          .
         </div>
       </Snackbar>
     </div>

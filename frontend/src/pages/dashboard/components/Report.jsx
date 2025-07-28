@@ -7,11 +7,11 @@ import {
   TableRow,
   TableCell,
 } from "@heroui/react";
-import { SelectBox, showError } from "../../../components";
+import { SelectBox, showError, convertCurrency } from "../../../components";
 import { useNavigate } from "react-router-dom";
 import { getAllExpense } from "../../../api";
 import { MONTHS } from "../../../../../shared/constants";
-import { appStore } from "../../../store";
+import { appStore, authStore } from "../../../store";
 
 const Report = () => {
   const [month, setMonth] = useState("");
@@ -19,6 +19,7 @@ const Report = () => {
   const [data, setData] = useState([]);
   const [limit, setLimit] = useState("");
   const categories = appStore((state) => state.categories);
+  const User = authStore((state) => state.user);
   const navigate = useNavigate();
   const previewRef = useRef();
 
@@ -35,9 +36,20 @@ const Report = () => {
   const handleReport = async () => {
     try {
       const response = await getAllExpense(filters);
-      if (response?.statusCode === 200) {
-        setData(response?.data);
-      }
+      if (response?.statusCode !== 200) return;
+
+      const updated = await Promise.all(
+        response.data.map(async (item) => {
+          const convertedAmount = await convertCurrency(
+            item.amount,
+            User?.currency,
+            "INR"
+          );
+          return { ...item, amount: convertedAmount };
+        })
+      );
+
+      setData(updated);
     } catch (err) {
       showError(err.message);
     }
@@ -69,7 +81,9 @@ const Report = () => {
         >
           <TableHeader>
             <TableColumn className="text-sm w-[35%]">TITLE</TableColumn>
-            <TableColumn className="text-sm w-[15%]">AMOUNT</TableColumn>
+            <TableColumn className="text-sm w-[15%]">
+              AMOUNT ({User?.currency})
+            </TableColumn>
             <TableColumn className="text-sm w-[20%]">CATEGORY</TableColumn>
             <TableColumn className="text-sm w-[15%]">TYPE</TableColumn>
             <TableColumn className="text-sm w-[15%]">DATE</TableColumn>
@@ -83,7 +97,7 @@ const Report = () => {
                   className="hover:bg-indigo-100 dark:hover:bg-indigo-900 transition-colors duration-200"
                 >
                   <TableCell>{item.title}</TableCell>
-                  <TableCell>{item.amount}</TableCell>
+                  <TableCell>{item.amount + " " + User?.currency}</TableCell>
                   <TableCell>{item.category}</TableCell>
                   <TableCell>{item.type}</TableCell>
                   <TableCell>

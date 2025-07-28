@@ -1,32 +1,39 @@
 import React, { useState, useEffect } from "react";
 import { Bar } from "react-chartjs-2";
-import { appStore } from "../store";
+import { appStore, authStore } from "../store";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
 import { getBarChart, getCategoryData } from "../api";
 import { CATEGORIES } from "../../../shared/constants";
-import { getLastSixMonths } from "./index";
+import { getLastSixMonths, convertCurrency } from "./index";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export const Bargraph = () => {
   const [expenseData, setExpenseData] = useState([]);
   const [incomeData, setIncomeData] = useState([]);
-
+  const User = authStore((state) => state.user);
   useEffect(() => {
     const fetchBarChartData = async () => {
       try {
         const { data } = await getBarChart();
         const months = getLastSixMonths();
 
-        const mapMonthlyData = (sourceData) =>
-          months.map((month) => {
+        const convertData = async (sourceData) => {
+          const values = months.map((month) => {
             const found = sourceData.find((item) => item.month === month);
             return found?.total || 0;
           });
+          const convertedValues = await Promise.all(
+            values.map((val) => convertCurrency(val, User?.currency, "INR"))
+          );
+          return convertedValues;
+        };
+        const convertedExpense = await convertData(data.formattedExpense);
+        const convertedIncome = await convertData(data.formattedIncome);
 
-        setExpenseData(mapMonthlyData(data.formattedExpense));
-        setIncomeData(mapMonthlyData(data.formattedIncome));
+        setExpenseData(convertedExpense);
+        setIncomeData(convertedIncome);
       } catch (error) {
         console.error("Failed to load bar chart data:", error);
       }
@@ -34,7 +41,6 @@ export const Bargraph = () => {
 
     fetchBarChartData();
   }, []);
-
   const data = {
     labels: getLastSixMonths(),
     datasets: [
@@ -62,13 +68,24 @@ export const Bargraph = () => {
           font: { size: 12 },
         },
       },
+      tooltip: {
+        callbacks: {
+          label: (ctx) =>
+            `${ctx.dataset.label}: ${ctx.raw} ${User?.currency || "INR"}`,
+        },
+      },
     },
     scales: {
       y: {
-        ticks: { color: "#6b7280" }, // gray-500
+        ticks: {
+          color: "#6b7280",
+          callback: (value) => `${value} ${User?.currency || "INR"}`,
+        },
       },
       x: {
-        ticks: { color: "#6b7280" },
+        ticks: {
+          color: "#6b7280",
+        },
       },
     },
   };
@@ -89,20 +106,29 @@ export const Bargraph = () => {
 };
 export const Piechart = () => {
   const [categorydata, setCategoryData] = useState();
-
+  const User = authStore((state) => state.user);
   useEffect(() => {
     const fetchCategoryData = async () => {
       try {
         const res = await getCategoryData();
         const data = res.data.result;
-        const finalData = CATEGORIES.map((cat) => {
-          const found = data.find((item) => item.category === cat);
-          return {
-            category: cat,
-            totalExpense: found?.totalExpense || 0,
-          };
-        });
-        setCategoryData(finalData);
+        const converted = await Promise.all(
+          CATEGORIES.map(async (cat) => {
+            const found = data.find((item) => item.category === cat);
+            const amount = found?.totalExpense || 0;
+            const convertedAmount = await convertCurrency(
+              amount,
+              User?.currency,
+              "INR"
+            );
+            return {
+              category: cat,
+              totalExpense: convertedAmount,
+            };
+          })
+        );
+
+        setCategoryData(converted);
       } catch (error) {
         console.error("Failed to load categories data:", error);
       }
@@ -125,7 +151,20 @@ export const Piechart = () => {
   };
   const options = {
     maintainAspectRatio: false,
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            const value = context.raw;
+            const label = context.label;
+            const currency = User?.currency || "INR";
+            return `${label}: ${value} ${currency}`;
+          },
+        },
+      },
+    },
   };
+
   return (
     <div className="bg-gray-50 rounded-xl shadow-md p-4">
       <h2 className="text-center text-lg font-semibold mb-2 text-gray-800">

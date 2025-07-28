@@ -7,14 +7,15 @@ import {
   TableRow,
   TableCell,
 } from "@heroui/react";
-import { showError,Button } from "./index";
+import { showError, Button } from "./index";
 import { useNavigate } from "react-router-dom";
 import { getAllExpense } from "../api";
-
+import { authStore } from "../store";
+import { convertCurrency } from "./index";
 const LatestTransaction = () => {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
-
+  const User = authStore((state) => state.user);
   useEffect(() => {
     fetchLatestExpenses();
   }, []);
@@ -26,9 +27,18 @@ const LatestTransaction = () => {
       };
 
       const response = await getAllExpense(filters);
-      if (response?.statusCode === 200) {
-        setData(response?.data);
-      }
+      if (response?.statusCode !== 200) return;
+      const updated = await Promise.all(
+        response.data.map(async (item) => {
+          const convertedAmount = await convertCurrency(
+            item.amount,
+            User?.currency,
+            "INR"
+          );
+          return { ...item, amount: convertedAmount };
+        })
+      );
+      setData(updated);
     } catch (err) {
       showError(err.message);
     }
@@ -47,7 +57,9 @@ const LatestTransaction = () => {
       >
         <TableHeader>
           <TableColumn className="text-sm w-[35%]">TITLE</TableColumn>
-          <TableColumn className="text-sm w-[15%]">AMOUNT</TableColumn>
+          <TableColumn className="text-sm w-[15%]">
+            AMOUNT ({User?.currency})
+          </TableColumn>
           <TableColumn className="text-sm w-[20%]">CATEGORY</TableColumn>
           <TableColumn className="text-sm w-[15%]">TYPE</TableColumn>
           <TableColumn className="text-sm w-[15%]">DATE</TableColumn>
@@ -61,7 +73,7 @@ const LatestTransaction = () => {
                 className="hover:bg-indigo-100 dark:hover:bg-indigo-900 transition-colors duration-200"
               >
                 <TableCell>{item.title}</TableCell>
-                <TableCell>{item.amount}</TableCell>
+                <TableCell>{item.amount + " " + User?.currency}</TableCell>
                 <TableCell>{item.category}</TableCell>
                 <TableCell>{item.type}</TableCell>
                 <TableCell>
@@ -80,10 +92,7 @@ const LatestTransaction = () => {
       </Table>
 
       <div className="flex justify-center mt-6">
-        <Button
-           width="w-[150px]"
-           onClick={() => navigate("/dashboard/report")}
-        >
+        <Button width="w-[150px]" onClick={() => navigate("/dashboard/report")}>
           {" "}
           <div className="flex justify-center items-center gap-1">
             Read more

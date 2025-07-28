@@ -12,7 +12,7 @@ import {
   SelectBox,
   showSuccess,
   showError,
-  convertToINR,
+  convertCurrency,
 } from "../../../components";
 import { Formik } from "formik";
 import { useNavigate } from "react-router-dom";
@@ -24,7 +24,7 @@ function AddEntry() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const GET_CATEGORY = appStore((state) => state.categories);
   const GET_CURRENCY = authStore((state) => state.user.currency);
-  const setLimit = appStore((state) => state.setLimit);
+  // const setLimit = appStore((state) => state.setLimit);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
@@ -70,8 +70,9 @@ function AddEntry() {
 
   const handleCreate = async (values, { resetForm }) => {
     try {
-      const convertedAmount = await convertToINR(
+      const convertedAmount = await convertCurrency(
         Number(values.amount),
+        "INR",
         GET_CURRENCY
       );
       const payload = {
@@ -87,7 +88,7 @@ function AddEntry() {
       const response = await createExpense(payload);
       const { message, statusCode, data } = response;
       if (statusCode === 201) {
-        setLimit(data?.limit);
+        // setLimit(data?.limit);
         showSuccess(message);
       } else {
         showError(message);

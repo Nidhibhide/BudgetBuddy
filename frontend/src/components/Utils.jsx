@@ -20,7 +20,7 @@ export const callToStore = async (data) => {
   const setLimit = appStore.getState().setLimit;
   setUser(data);
   await setCategoryFromAPI(setCategories);
-  await setLimitFromAPI(setLimit);
+  await setLimitFromAPI(setLimit,data);//here jo bhi currency hoga usme INR to current cuurency mein convert krna hoga
 };
 
 export const useHandleResponse = () => {
@@ -68,18 +68,19 @@ export const categoryIcons = {
   Hotel: <FaHotel size={20} color="white" />,
 };
 
-export const convertToINR = async (amount, currency) => {
+export const convertCurrency = async (amount, to, from) => {
   try {
-    if (currency === "INR") return amount;
-
-    const url = `https://api.frankfurter.app/latest?amount=${amount}&from=${currency}&to=INR`;
-
+    if (to === from) return amount;
+    if (amount === 0) return 0;
+    const url = `https://api.frankfurter.app/latest?amount=${amount}&from=${from}&to=${to}`;
     const response = await axios.get(url);
     const data = response.data;
-    if (!data?.rates?.INR) {
+
+    if (!data?.rates?.[to]) {
       throw new Error("Conversion failed or invalid currency.");
     }
-    return parseFloat(data.rates.INR.toFixed(2));
+
+    return parseFloat(data.rates[to].toFixed(2));
   } catch (error) {
     console.error("Conversion error:", error.message);
     return 0;

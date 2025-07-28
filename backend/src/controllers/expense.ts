@@ -230,7 +230,6 @@ const getCount = async (req: Request, res: Response) => {
         return [cat, found?.count || 0];
       })
     );
-    console.log(result);
     return JsonOne(res, 200, "Fetched count", true, result);
   } catch (err) {
     console.error("Error fetching category counts:", err);

@@ -9,15 +9,17 @@ import {
   MultiSelect,
   WarningModal,
   getDiffCategories,
+  convertCurrency,
 } from "./index";
 import { createCategory, editbudget, getCount, softdelete } from "../api";
 
-import { appStore } from "../store";
+import { appStore, authStore } from "../store";
 import { CATEGORIES, CATEGORY_LIST } from "../../../shared/constants";
 
 const FinancialSetting = () => {
   const [loading, setLoading] = useState(false);
   const setCategories = appStore((state) => state.setCategories);
+  const GET_CURRENCY = authStore((state) => state.user.currency);
   const [showModal, setShowModal] = useState(false);
   const [deletedCategories, setDeletedCategories] = useState([]);
   const [newCategories, setNewCategories] = useState([]);
@@ -26,19 +28,25 @@ const FinancialSetting = () => {
   const categories = appStore((state) => state.categories);
   const limit = appStore((state) => state.limit);
   const Response = useHandleResponse();
-  const validationSchema = Yup.object().shape({
-    limit: Yup.number()
-      .required("Budget limit is required")
-      .min(1, "Limit must be greater than 0"),
-  });
 
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
       const { names: updatedCategories, limit: newLimit } = values;
+
+      // Convert limit to INR for storage
+      const convertedLimitToINR = await convertCurrency(
+        Number(newLimit),
+        "INR",
+        GET_CURRENCY
+      );
+
+      //here limit jo store krna hai wo kis bhi currency se INR mein convert krna hai
+      //and jo limit set krna hai store mein wo current currency mein hi convert hoga
       // Update budget limit if changed
+
       if (Number(newLimit) !== Number(limit)) {
-        const res = await editbudget({ limit: Number(newLimit) });
+        const res = await editbudget({ limit: convertedLimitToINR });
         setLimit(newLimit);
         Response({ response: res });
       }
@@ -52,6 +60,7 @@ const FinancialSetting = () => {
 
         setDeletedCategories(removedCategories);
         setNewCategories(updatedCategories);
+
         const res = await getCount(removedCategories);
         if (res?.statusCode === 200) {
           const hasRecords = Object.values(res?.data).some(
@@ -94,7 +103,6 @@ const FinancialSetting = () => {
           limit: limit ?? "",
           names: categories.length > 0 ? categories : CATEGORIES,
         }}
-        validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
         {({ values, setFieldValue }) => (
@@ -112,7 +120,7 @@ const FinancialSetting = () => {
             />
             <InputBox
               name="limit"
-              label="Set Your Budget Limit"
+              label={`Set Your Budget Limit (in ${GET_CURRENCY})`}
               type="number"
             />
 

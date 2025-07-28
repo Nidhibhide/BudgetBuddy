@@ -6,32 +6,52 @@ import {
   Avatar,
   Stack,
   Paper,
-  Divider,
 } from "@mui/material";
 import { getCategoryData } from "../api";
 import { FaQuestionCircle } from "react-icons/fa";
 import { CATEGORIES } from "../../../shared/constants";
-import { categoryIcons } from "./index";
+import { categoryIcons, convertCurrency } from "./index";
+import { authStore } from "../store";
 
 function ProgressBar() {
   const [categorydata, setCategoryData] = useState([]);
   const [totalBudget, setTotalBudget] = useState(0);
+  const User = authStore((state) => state.user);
   useEffect(() => {
     const fetchCategoryData = async () => {
       try {
         const res = await getCategoryData();
-        const data = res.data.result;
-        setTotalBudget(res.data.budgetData?.budget);
-        const finalData = CATEGORIES.map((cat) => {
-          const found = data.find((item) => item.category === cat);
-          return {
-            category: cat,
-            amount: found?.totalExpense || 0,
-            icon: categoryIcons[cat] || (
-              <FaQuestionCircle size={20} color="white" />
-            ),
-          };
-        });
+        const rawData = res.data.result;
+        const rawBudget = res.data.budgetData?.budget || 0;
+
+        // Convert total budget
+        const convertedBudget = await convertCurrency(
+          rawBudget,
+          User?.currency,
+          "INR"
+        );
+        setTotalBudget(convertedBudget);
+
+        const finalData = await Promise.all(
+          CATEGORIES.map(async (cat) => {
+            const found = rawData.find((item) => item.category === cat);
+            const amount = found?.totalExpense || 0;
+            const convertedAmount = await convertCurrency(
+              amount,
+              User?.currency,
+              "INR"
+            );
+
+            return {
+              category: cat,
+              amount: convertedAmount,
+              icon: categoryIcons[cat] || (
+                <FaQuestionCircle size={20} color="white" />
+              ),
+            };
+          })
+        );
+
         setCategoryData(finalData);
       } catch (error) {
         console.error("Failed to load categories data:", error);
@@ -65,7 +85,7 @@ function ProgressBar() {
                 {item.category}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                ₹{item.amount}
+                {item.amount} {User?.currency || "INR"}
               </Typography>
             </Box>
           </Stack>

@@ -6,6 +6,7 @@ const budgetSchema = new mongoose.Schema(
     budget: {
       type: Number,
       required: true,
+      set: (v: number): number => Number(v.toFixed(2)),
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
