@@ -11,7 +11,13 @@ import {
   getDiffCategories,
   convertCurrency,
 } from "./index";
-import { createCategory, editbudget, getCount, softdelete } from "../api";
+import {
+  createCategory,
+  editbudget,
+  getCount,
+  softdelete,
+  restoredelete,
+} from "../api";
 
 import { appStore, authStore } from "../store";
 import { CATEGORIES, CATEGORY_LIST } from "../../../shared/constants";
@@ -41,10 +47,6 @@ const FinancialSetting = () => {
         GET_CURRENCY
       );
 
-      //here limit jo store krna hai wo kis bhi currency se INR mein convert krna hai
-      //and jo limit set krna hai store mein wo current currency mein hi convert hoga
-      // Update budget limit if changed
-
       if (Number(newLimit) !== Number(limit)) {
         const res = await editbudget({ limit: convertedLimitToINR });
         setLimit(newLimit);
@@ -62,14 +64,10 @@ const FinancialSetting = () => {
         setNewCategories(updatedCategories);
 
         const res = await getCount(removedCategories);
+
         if (res?.statusCode === 200) {
-          const hasRecords = Object.values(res?.data).some(
-            (count) => count !== 0
-          );
-          if (hasRecords) {
-            setData(res.data);
-            setShowModal(true);
-          }
+          setData(res.data);
+          setShowModal(true);
           return;
         }
       }
@@ -84,6 +82,9 @@ const FinancialSetting = () => {
       let res;
       if (deletedCategories.length > 0) {
         res = await softdelete({ categories: deletedCategories });
+      }
+      if (newCategories.length > 0) {
+        res = await restoredelete({ categories: newCategories });
       }
 
       const response = await createCategory({ names: newCategories });

@@ -33,7 +33,6 @@ const Welcome = () => {
   const fetchBudgetData = async () => {
     try {
       const res = await getTransactions();
-      console.log(res);
       let convertedExpense = Number(res?.data?.totalExpense) || 0;
 
       if (user?.currency !== "INR") {
@@ -46,7 +45,7 @@ const Welcome = () => {
 
       setTotalExpense(convertedExpense);
 
-      if (limit !== 0 && convertedExpense < limit) {
+      if (limit !== 0 && convertedExpense > limit) {
         setOpen(true);
       }
     } catch (error) {

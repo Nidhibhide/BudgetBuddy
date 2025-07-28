@@ -18,6 +18,6 @@ router.get("/getAll", IsLoggeedIn, getAll);
 router.post("/get-count", IsLoggeedIn, getCount);
 router.put("/delete", IsLoggeedIn, softDelete);
 router.put("/edit/:id", IsLoggeedIn, ExpenseMid, edit);
-router.put("/restore/:id", IsLoggeedIn, restore);
+router.put("/restore", IsLoggeedIn, restore);
 
 export default router;

@@ -122,9 +122,49 @@ const getAll = async (req: Request, res: Response) => {
 const softDelete = async (req: Request, res: Response) => {
   try {
     const { categories } = req.body;
-
+    const userId = req.user?._id;
     if (!categories?.length) {
       return JsonOne(res, 400, "No categories provided", false);
+    }
+
+    const [incomeAgg, expenseAgg] = await Promise.all([
+      expense.aggregate([
+        {
+          $match: {
+            user: userId,
+            category: { $in: categories },
+            type: "Income",
+            isDeleted: false,
+          },
+        },
+        {
+          $group: { _id: null, total: { $sum: "$amount" } },
+        },
+      ]),
+      expense.aggregate([
+        {
+          $match: {
+            user: userId,
+            category: { $in: categories },
+            type: "Expense",
+            isDeleted: false,
+          },
+        },
+        {
+          $group: { _id: null, total: { $sum: "$amount" } },
+        },
+      ]),
+    ]);
+
+    const totalIncome = incomeAgg[0]?.total || 0;
+    const totalExpense = expenseAgg[0]?.total || 0;
+    const remaining = +(totalIncome - totalExpense).toFixed(2);
+
+    if (remaining > 0) {
+      await budget.updateOne(
+        { user: userId },
+        { $inc: { budget: -remaining } }
+      );
     }
 
     const result = await expense.updateMany(
@@ -149,27 +189,57 @@ const softDelete = async (req: Request, res: Response) => {
 
 const restore = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const { categories } = req.body;
+    const userId = req.user?._id;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return JsonOne(res, 400, "Invalid expense ID", false);
+    if (!categories?.length) {
+      return JsonOne(res, 400, "No categories provided", false);
     }
 
-    const deletedExpense = await expense.findByIdAndUpdate(
-      id,
-      { isDeleted: false },
-      { new: true }
+    const incomeAgg = await expense.aggregate([
+      {
+        $match: {
+          user: userId,
+          category: { $in: categories },
+          type: "Income",
+          isDeleted: true, // restoring soft-deleted entries
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalIncome: { $sum: "$amount" },
+        },
+      },
+    ]);
+
+    const totalIncome = incomeAgg[0]?.totalIncome || 0;
+
+    if (totalIncome > 0) {
+      await budget.updateOne(
+        { user: userId },
+        { $inc: { budget: totalIncome } }
+      );
+    }
+
+    const result = await expense.updateMany(
+      { category: { $in: categories }, isDeleted: true },
+      { isDeleted: false }
     );
 
-    if (!deletedExpense) {
-      return JsonOne(res, 404, "expense not found", false);
+    if (result.modifiedCount === 0) {
+      return JsonOne(res, 404, "No matching soft-deleted entries found", false);
     }
 
-    return JsonOne(res, 200, "Expense restored successfully", true);
+    return JsonOne(
+      res,
+      200,
+      `${result.modifiedCount} records restored successfully`,
+      true
+    );
   } catch (error) {
-    console.error("Soft restore error:", error);
-
-    JsonOne(res, 500, "unexpected error occurred while restore expense", false);
+    console.error("Error while restoring records:", error);
+    return JsonOne(res, 500, "Something went wrong", false);
   }
 };
 
@@ -203,7 +273,7 @@ const edit = async (req: Request, res: Response) => {
 const getCount = async (req: Request, res: Response) => {
   try {
     const userId = req.user?._id;
-    const categories = req.body; 
+    const categories = req.body;
     if (!categories || categories.length === 0) {
       return JsonOne(res, 400, "No categories provided", false);
     }

@@ -51,3 +51,16 @@ export const softdelete = async (categories) => {
     );
   }
 };
+export const restoredelete = async (categories) => {
+  try {
+    const res = await globalaxios.put("/expense/restore", categories);
+    return res.data;
+  } catch (err) {
+    return (
+      err.response?.data || {
+        message: "Unexpected error occurred",
+        statusCode: 500,
+      }
+    );
+  }
+};

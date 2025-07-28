@@ -5,18 +5,18 @@ const Home = () => {
   const navigate = useNavigate();
   return (
     <div className="bg-[#ffffff]  dark:bg-[#000000] text-[#0f172a] dark:text-[#f8fafc]  h-auto w-full py-28    ">
-      <div className="flex xl:flex-row flex-col gap-12 xl:gap-2 px-4 md:px-20 ">
-        <div className="flex-1 flex flex-col xl:gap-8 gap-6 ">
-          <div className="xl:text-7xl  md:text-6xl text-4xl  font-bold text-center xl:text-left ">
+      <div className="flex xl:flex-row flex-col gap-12 xl:gap-2 px-4 md:px-20 justify-center ">
+        <div className="flex flex-col xl:gap-8 gap-6 items-center justify-center ">
+          <div className="xl:text-6xl  md:text-5xl text-4xl  font-bold text-center max-w-6xl ">
             Hey there! Ready to take{" "}
             <span className="text-indigo-500">control</span> of your money?
           </div>
 
-          <div className="md:text-xl text-center xl:text-left text-lg ">
+          <div className=" text-center xl:text-xl text-lg ">
             From daily spends to monthly insights — all in one clean view.
             Simple. Smart. Stress-free.
           </div>
-          <div className="flex gap-4 justify-center xl:justify-start ">
+          <div className="flex gap-4 items-center">
             <Button onClick={() => navigate("/signin")} width="w-[150px]">
               Get Started
             </Button>
@@ -27,13 +27,6 @@ const Home = () => {
               Read more
             </a>
           </div>
-        </div>
-        <div className="flex-1">
-          <img
-            src="https://wallpapercave.com/wp/wp2722928.jpg"
-            alt="expense tracker image"
-            className="w-full h-[500px] object-cover"
-          />
         </div>
       </div>
       <div className="w-full flex justify-center mt-28 px-4" id="features">
