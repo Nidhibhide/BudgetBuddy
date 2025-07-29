@@ -13,7 +13,7 @@ import budgetRoutes from "./routes/budgetRoutes";
 import categoryRoutes from "./routes/categoryRoutes";
 import dashboardRoutes from "./routes/dashboardRoutes";
 const corsOptions = {
-  origin: ["http://localhost:5173","https://budget-buddy-roan.vercel.app/"],
+  origin: ["http://localhost:5173","https://budget-buddy-roan.vercel.app"],
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
