@@ -4,7 +4,7 @@ import { appStore, authStore } from "../store";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
 import { getBarChart, getCategoryData } from "../api";
-import { CATEGORIES } from "../../../shared/constants";
+import { CATEGORY_LIST } from "../../../shared/constants";
 import { getLastSixMonths, convertCurrency } from "./index";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -113,7 +113,7 @@ export const Piechart = () => {
         const res = await getCategoryData();
         const data = res.data.result;
         const converted = await Promise.all(
-          CATEGORIES.map(async (cat) => {
+          CATEGORY_LIST.map(async (cat) => {
             const found = data.find((item) => item.category === cat);
             const amount = found?.totalExpense || 0;
             const convertedAmount = await convertCurrency(
@@ -127,7 +127,6 @@ export const Piechart = () => {
             };
           })
         );
-
         setCategoryData(converted);
       } catch (error) {
         console.error("Failed to load categories data:", error);
@@ -137,6 +136,7 @@ export const Piechart = () => {
     fetchCategoryData();
   }, []);
   const GET_CATEGORY = appStore((state) => state.categories);
+  console;
   const hasData = categorydata?.some((item) => item.totalExpense > 0);
 
   const data = {

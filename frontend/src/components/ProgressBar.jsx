@@ -9,13 +9,13 @@ import {
 } from "@mui/material";
 import { getCategoryData } from "../api";
 import { FaQuestionCircle } from "react-icons/fa";
-import { CATEGORIES } from "../../../shared/constants";
 import { categoryIcons, convertCurrency } from "./index";
-import { authStore } from "../store";
+import { authStore, appStore } from "../store";
 
 function ProgressBar() {
   const [categorydata, setCategoryData] = useState([]);
   const [totalBudget, setTotalBudget] = useState(0);
+  const CATEGORY_LIST = appStore((state) => state.categories);
   const User = authStore((state) => state.user);
   useEffect(() => {
     const fetchCategoryData = async () => {
@@ -33,7 +33,7 @@ function ProgressBar() {
         setTotalBudget(convertedBudget);
 
         const finalData = await Promise.all(
-          CATEGORIES.map(async (cat) => {
+          CATEGORY_LIST.map(async (cat) => {
             const found = rawData.find((item) => item.category === cat);
             const amount = found?.totalExpense || 0;
             const convertedAmount = await convertCurrency(
@@ -62,7 +62,7 @@ function ProgressBar() {
   }, []);
 
   const colors = ["#1976d2", "#9c27b0", "#f44336", "#ff9800", "#009688"];
-
+  console.log(categorydata);
   return (
     <Paper
       sx={{ maxWidth: 820, p: 3, borderRadius: 3, backgroundColor: "#f9fafb" }}
