@@ -7,7 +7,7 @@
     "strict": true,
     "sourceMap": true,
     "baseUrl": "./",
-    // "rootDir": "./src"
+    "rootDir": "./src"
   },
   "include": ["src/**/*", "../shared/**/*"]
 }
