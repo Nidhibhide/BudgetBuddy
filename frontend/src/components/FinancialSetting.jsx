@@ -20,7 +20,7 @@ import {
 } from "../api";
 
 import { appStore, authStore } from "../store";
-import { CATEGORIES, CATEGORY_LIST } from "../../../shared/constants";
+import { CATEGORIES, CATEGORY_LIST } from "../constants";
 
 const FinancialSetting = () => {
   const [loading, setLoading] = useState(false);

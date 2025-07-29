@@ -1,6 +1,6 @@
 import { getbudget, getCategories } from "../api";
 import { convertCurrency } from "./Utils";
-import { CATEGORIES } from "../../../shared/constants";
+import { CATEGORIES } from "../constants";
 export const setLimitFromAPI = async (setLimit, data) => {
   try {
     const res = await getbudget();

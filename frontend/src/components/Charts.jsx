@@ -4,7 +4,7 @@ import { appStore, authStore } from "../store";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
 import { getBarChart, getCategoryData } from "../api";
-import { CATEGORY_LIST } from "../../../shared/constants";
+import { CATEGORY_LIST } from "../constants";
 import { getLastSixMonths, convertCurrency } from "./index";
 
 ChartJS.register(ArcElement, Tooltip, Legend);

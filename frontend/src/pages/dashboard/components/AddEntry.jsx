@@ -18,7 +18,7 @@ import { Formik } from "formik";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { createExpense } from "../../../api";
-import { TYPES } from "../../../../../shared/constants";
+import { TYPES } from "../../../constants";
 import { appStore, authStore } from "../../../store";
 function AddEntry() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();

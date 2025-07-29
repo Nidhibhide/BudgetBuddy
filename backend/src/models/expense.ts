@@ -1,4 +1,4 @@
-import { CATEGORIES, TYPES } from "../../../shared/constants";
+import { CATEGORIES, TYPES } from "../constants";
 import mongoose from "mongoose";
 
 const expenseSchema = new mongoose.Schema(

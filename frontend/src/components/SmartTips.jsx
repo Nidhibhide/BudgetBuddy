@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getTips } from "../api";
-import { DEFAULT_TIPS } from "../../../shared/constants";
+import { DEFAULT_TIPS } from "../constants";
 const SmartTips = () => {
   const [tips, setTips] = useState([]);
   useEffect(() => {

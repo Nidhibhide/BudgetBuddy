@@ -5,7 +5,7 @@ import {
   passwordValidator,
   selectValidator,
 } from "../utils/GlobalValidation";
-import { CURRENCIES } from "../../../shared/constants";
+import { CURRENCIES } from "../constants";
 
 const Register = Joi.object({
   name: stringValidator("Name", 3, 50, true),

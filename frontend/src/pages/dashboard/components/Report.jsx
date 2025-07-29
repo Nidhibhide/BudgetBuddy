@@ -10,7 +10,7 @@ import {
 import { SelectBox, showError, convertCurrency } from "../../../components";
 import { useNavigate } from "react-router-dom";
 import { getAllExpense } from "../../../api";
-import { MONTHS } from "../../../../../shared/constants";
+import { MONTHS } from "../../../constants";
 import { appStore, authStore } from "../../../store";
 
 const Report = () => {

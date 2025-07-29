@@ -2,7 +2,7 @@ import { JsonOne } from "../utils/responseFun";
 import { Request, Response } from "express";
 import expense from "../models/expense";
 import budget from "../models/budget";
-import { MONTHS } from "../../../shared/constants";
+import { MONTHS } from "../constants";
 const getTransaction = async (req: Request, res: Response) => {
   const userId = req.user?._id;
 

@@ -1,0 +1,1 @@
+{"version":3,"file":"budgetRoutes.js","sourceRoot":"","sources":["../../src/routes/budgetRoutes.ts"],"names":[],"mappings":";;;;;AAAA,kDAAqD;AACrD,sDAA8B;AAC9B,yEAAmD;AAEnD,MAAM,MAAM,GAAG,iBAAO,CAAC,MAAM,EAAE,CAAC;AAEhC,MAAM,CAAC,GAAG,CAAC,OAAO,EAAE,mBAAW,EAAE,aAAI,CAAC,CAAC;AAEvC,MAAM,CAAC,GAAG,CAAC,MAAM,EAAE,mBAAW,EAAE,eAAM,CAAC,CAAC;AACxC,kBAAe,MAAM,CAAC"}

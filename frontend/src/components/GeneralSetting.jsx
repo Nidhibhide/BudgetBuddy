@@ -6,7 +6,7 @@ import {
   useHandleResponse,
   convertCurrency,
 } from "./index";
-import { CURRENCIES, THEMES } from "../../../shared/constants";
+import { CURRENCIES, THEMES } from "../constants";
 import { appStore, authStore } from "../store";
 import { editUser } from "../api";
 

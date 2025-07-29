@@ -1,6 +1,6 @@
 import React from "react";
 import toast from "react-hot-toast";
-import { MONTHS } from "../../../shared/constants";
+import { MONTHS } from "../constants";
 import { authStore, appStore } from "../store";
 import { useNavigate } from "react-router-dom";
 import { setLimitFromAPI, setCategoryFromAPI } from "./index";

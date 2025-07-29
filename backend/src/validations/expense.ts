@@ -4,7 +4,7 @@ import {
   selectValidator,
   numberValidator,
 } from "../utils/GlobalValidation";
-import { TYPES } from "../../../shared/constants";
+import { TYPES } from "../constants";
 
 const expense = Joi.object({
   title: stringValidator("Title", 3, 30, true),

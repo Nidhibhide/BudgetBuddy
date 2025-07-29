@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { CURRENCIES } from "../../../shared/constants";
+import { CURRENCIES } from "../constants";
 const UserSchmea = new mongoose.Schema(
   {
     name: { type: String, required: true },

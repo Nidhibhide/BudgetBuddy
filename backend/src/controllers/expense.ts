@@ -3,7 +3,7 @@ import { JsonOne, JsonAll } from "../utils/responseFun";
 import { Request, Response } from "express";
 import expense from "../models/expense";
 import budget from "../models/budget";
-import { MONTHS } from "../../../shared/constants";
+import { MONTHS } from "../constants";
 const create = async (req: Request, res: Response) => {
   const { title, amount, category, type, description } = req.body;
   const userId = req.user?._id;

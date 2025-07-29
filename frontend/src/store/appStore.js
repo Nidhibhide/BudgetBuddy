@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { CATEGORIES } from "../../../shared/constants";
+import { CATEGORIES } from "../constants";
 
 const appStore = create(
   persist(
